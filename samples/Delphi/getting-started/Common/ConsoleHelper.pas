@@ -7,15 +7,6 @@ uses CrystalNet.Console, Microsoft.ML.Data.Intf, CrystalNet.Runtime.Intf, Crysta
   CNCoreClrLib.CollectionMgr, System.Generics.Collections, MLMetrics, MLData, MLContextMgr, MLCore,
   SysUtils, MLCollections, MLTransforms;
 
-//type
-//  TMLEnumerableHelper = class
-//  public
-//    class function Take<T>(AArray: TArray<T>; Count: Integer): TArray<T>;
-//    class function Select<T, U>(AArray: TArray<T>; SelectFunc: TFunc<T, U>): TArray<U>; overload;
-//    class function Select<T, U>(AList: TList<T>; SelectFunc: TFunc<T, U>): TArray<U>; overload;
-//    class function Last<T>(AArray: TArray<T>): T;
-//  end;
-
 procedure PrintPrediction(prediction: string);
 procedure PrintRegressionPredictionVersusObserved(predictionCount, observedCount: string);
 procedure PrintRegressionMetrics(name: string; metrics: IMLRegressionMetrics);
@@ -40,7 +31,6 @@ function GetAbsolutePath(relativePath: string): string;
 procedure EvaluateMetrics(const mlContext: IMLContextManager; predictions: IMLDataView);
 function Join(const Separator: string; Values: TArray<Single>): string;
 function Take(Values: IReadOnlySpan<Single>; Number: Integer): TArray<Single>;
-
 
 
 implementation
@@ -84,20 +74,6 @@ begin
 
   Result := TPath.NClass.GetFullPath(fullPath);
 end;
-
-
-//function Average(Values: TArray<Double>): Double;
-//var
-//  m_value: Double;
-//begin
-//  var sumValues := 0.0;
-//  for m_value in Values do
-//  begin
-//    sumValues := sumValues + m_value;
-//  end;
-//
-//  Result:= sumValues / Length(Values);
-//end;
 
 procedure PrintPrediction(prediction: string);
 begin
@@ -257,21 +233,6 @@ begin
   TConsole.NClass.WriteLine('*************************************************************************************************************');
 end;
 
-//function CalculateStandardDeviation (values: TArray<double>): Double; overload;
-//var
-//  sumOfSquaresOfDifferences, value: Double;
-//begin
-//  var average := Average(values);
-//  sumOfSquaresOfDifferences := 0;
-//  for value in values do
-//  begin
-//    sumOfSquaresOfDifferences := sumOfSquaresOfDifferences + ((value - average) * (value - average));
-//  end;
-//
-//  var standardDeviation := TMath.NClass.Sqrt(sumOfSquaresOfDifferences / (Length(values)-1));
-//  Result := standardDeviation;
-//end;
-
 function CalculateStandardDeviation(values: Enumerable<Double>): Double;
 var
   sumOfSquaresOfDifferences, value: Double;
@@ -286,12 +247,6 @@ begin
   var standardDeviation := TMath.NClass.Sqrt(sumOfSquaresOfDifferences / (values.Count-1));
   Result := standardDeviation;
 end;
-
-//function CalculateConfidenceInterval95(values: TArray<double>): Double;
-//begin
-//  var confidenceInterval95 := 1.96 * CalculateStandardDeviation(values) / TMath.NClass.Sqrt((Length(values)-1));
-//  Result := confidenceInterval95;
-//end;
 
 function CalculateConfidenceInterval95(values: Enumerable<double>): Double;
 begin
@@ -310,36 +265,7 @@ begin
 end;
 
 procedure ShowDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; numberOfRows: Integer = 4);
-//var
-//  row: IRowInfo;
-//  rowViewEnumerable: TCoreClrEnumerable<IRowInfo>;
-//  columnEnumerable: TCoreClrEnumerable<IKeyValuePair<string, Variant>>;
-//  column: IKeyValuePair<string, Variant>;
 begin
-//  var msg := TString.NClass.Format('Show data in DataView: Showing {0} rows with the columns', numberOfRows);
-//  ConsoleWriteHeader([msg]);
-//
-//  var preViewTransformedData := TDebuggerExtensions.NClass.Preview(dataView, numberOfRows);
-//  rowViewEnumerable := TCoreClrEnumerable<IRowInfo>.Create(preViewTransformedData.RowView);
-//  try
-//    for row in rowViewEnumerable do
-//    begin
-//      var ColumnCollection := row.Values;
-//      var lineToPrint := 'Row--> ';
-//      columnEnumerable := TCoreClrEnumerable<IKeyValuePair<string, Variant>>.Create(ColumnCollection);
-//      try
-//        for column in columnEnumerable do
-//        begin
-//          lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
-//        end;
-//        TConsole.NClass.WriteLine(lineToPrint + '\n');
-//      finally
-//        columnEnumerable.Free;
-//      end;
-//    end;
-//  finally
-//    rowViewEnumerable.Free;
-//  end;
 end;
 
 // This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
@@ -419,7 +345,6 @@ begin
 
   // Extract the 'Features' column.
   var someColumnData := transformedData.GetColumn<TArray<Single>>(columnName).Take(numberOfRows);
-//  var someColumnData := TMLEnumerableHelper.ConvertAll<Variant, TArray<Single>>(someColumnDataVariant);
 
   // print to TConsole.NClass the peeked rows
 
@@ -530,11 +455,6 @@ end;
 // To evaluate the accuracy of the model's predicted rankings, prints out the Discounted Cumulative Gain and Normalized Discounted Cumulative Gain for search queries.
 procedure EvaluateMetrics(const mlContext: IMLContextManager; predictions: IMLDataView);
 begin
-  // Evaluate the metrics for the data using NDCG; by default, metrics for the up to 3 search results in the query are reported (e.g. NDCG@3).
-  var metrics := mlContext.Ranking.Evaluate(predictions);
-//  TConsole.NClass.WriteLine('DCG: {string.Join(", ", metrics.DiscountedCumulativeGains.Select((d, i) => $"@{i + 1}:{d:F4}").ToArray())}');
-//  TConsole.NClass.WriteLine('NDCG: {string.Join(", ", metrics.NormalizedDiscountedCumulativeGains.Select((d, i) => $"@{i + 1}:{d:F4}").ToArray())}');
-//  TConsole.NClass.WriteLine;
 end;
 
 end.
