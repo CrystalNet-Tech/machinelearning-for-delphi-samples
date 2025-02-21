@@ -29,8 +29,8 @@ uses MLContextMgr, CreditCardFraudDetection_Models, CrystalNet.Console, MLData,
 
 class procedure TPredictor.Execute;
 begin
-  var assetsPath := GetAbsolutePath('..\..\..\AnomalyDetection\Predictor\Asserts');
-  var trainOutput := GetAbsolutePath('..\..\..\AnomalyDetection\Trainer\Asserts\Output');
+  var assetsPath := GetAbsolutePath('..\..\..\AnomalyDetection\Predictor\assets');
+  var trainOutput := GetAbsolutePath('..\..\..\AnomalyDetection\Trainer\assets\output');
 
   var inputDatasetForPredictions := TPath.NClass.Combine(assetsPath, 'input', 'testData.csv');
   var modelFilePath := TPath.NClass.Combine(assetsPath, 'input', 'randomizedPca.zip');
