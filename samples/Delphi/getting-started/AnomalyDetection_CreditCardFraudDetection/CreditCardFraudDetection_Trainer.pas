@@ -30,7 +30,7 @@ uses CreditCardFraudDetection_Models, CrystalNet.Console, CrystalNet.IO.FileSyst
 class procedure TTrainer.Execute;
 begin
   // File paths
-  var AssetsRelativePath := '..\..\..\AnomalyDetection\Trainer\assets';
+  var AssetsRelativePath := '..\..\..\Trainer\assets';
   var assetsPath := GetAbsolutePath(AssetsRelativePath);
 
   var zipDataSet := TPath.NClass.Combine(assetsPath, 'input', 'creditcardfraud-dataset.zip');
