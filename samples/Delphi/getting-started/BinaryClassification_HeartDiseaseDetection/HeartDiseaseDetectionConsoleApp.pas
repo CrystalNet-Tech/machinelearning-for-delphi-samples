@@ -1,7 +1,5 @@
 unit HeartDiseaseDetectionConsoleApp;
 
-//https://github.com/dotnet/machinelearning-samples/blob/main/samples/csharp/getting-started/BinaryClassification_HeartDiseaseDetection
-
 interface
 uses MLContextMgr;
 
