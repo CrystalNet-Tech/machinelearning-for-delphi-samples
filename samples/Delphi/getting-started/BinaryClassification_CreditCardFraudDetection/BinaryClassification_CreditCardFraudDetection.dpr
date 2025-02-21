@@ -10,7 +10,6 @@ uses
   CreditCardFraudDetection_Predictor in 'CreditCardFraudDetection_Predictor.pas',
   CreditCardFraudDetection_Trainer in 'CreditCardFraudDetection_Trainer.pas',
   CreditCardFraudDetectionConsoleApp in 'CreditCardFraudDetectionConsoleApp.pas',
-  LocalConsoleHelper in 'LocalConsoleHelper.pas',
   ConsoleHelper in '..\..\Common\ConsoleHelper.pas';
 
 begin
