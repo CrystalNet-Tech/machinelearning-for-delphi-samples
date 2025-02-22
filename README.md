@@ -72,9 +72,9 @@ The ML.Net Core for Delphi samples are divided in multiple categories depending 
     <td align="middle" colspan="3">Cross Cutting Scenarios</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/database.png" alt="Database chart"><br><b>Loading data with  LoadFromEnumerable<br><a href="samples/Delphi/getting-started/DatabaseIntegration">Delphi</a><b></td>
+    <td align="middle"><img src="images/database.png" alt="Database chart"><br><b>Loading data with <br/>  LoadFromEnumerable<br><a href="samples/Delphi/getting-started/DatabaseIntegration">Delphi</a><b></td>
     <td align="middle"><img src="images/large-data-set.png" alt="large file chart"><br><b>Large Datasets<br><a href="samples/Delphi/getting-started/LargeDatasets">Delphi</a><b></td>
-    <td align="middle"><img src="images/database.png" alt="Database chart"><br><b>Loading data with DatabaseLoader<br><a href="samples/Delphi/getting-started/DatabaseLoader">Delphi</a><b></td>
+    <td align="middle"><img src="images/database.png" alt="Database chart"><br><b>Loading data with <br/> DatabaseLoader<br><a href="samples/Delphi/getting-started/DatabaseLoader">Delphi</a><b></td>
   </tr>      
 </table>
 
