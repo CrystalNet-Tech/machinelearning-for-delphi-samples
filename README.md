@@ -64,8 +64,8 @@ The ML.Net Core for Delphi samples are divided in multiple categories depending 
     <td align="middle" colspan="3">Clustering</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/customer-segmentation.png" alt="Customer Segmentation chart"><br><b>Customer Segmentation<br><a href="samples/Delphi/getting-started/Clustering_CustomerSegmentation">Delphi</a></td>
     <td align="middle"><img src="images/clustering.png" alt="IRIS Flowers chart"><br><b>IRIS Flowers Clustering<br><a href="samples/Delphi/getting-started/Clustering_Iris">Delphi</a></td>
+    <td></td>
     <td></td>
   </tr>
   <tr>
