@@ -1,0 +1,1 @@
+Download the Criteo-100k-rows.md and Criteo-100k-rows_log.ldf from https://github.com/dotnet/machinelearning-samples/tree/main/samples/csharp/getting-started/DatabaseLoader/DatabaseLoaderConsoleApp/SqlLocalDb
