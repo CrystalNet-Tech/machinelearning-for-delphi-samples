@@ -22,7 +22,8 @@ procedure ShowDataViewInConsole(const mlContext: IMLContextManager; dataView: IM
 procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4); overload;
 procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLValueMappingEstimator; numberOfRows: Integer = 4); overload;
 procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorOfITransformer; numberOfRows: Integer = 4); overload;
-procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4);
+procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4); overload;
+procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorOfITransformer; numberOfRows: Integer = 4); overload;
 procedure ConsoleWriteHeader(lines: TArray<string>);
 procedure ConsoleWriterSection(lines: TArray<string>);
 procedure ConsolePressAnyKey();
@@ -38,7 +39,7 @@ function Take(Values: IReadOnlySpan<Single>; Number: Integer): TArray<Single>;
 implementation
 
 uses CNCoreClrLib.RttiMgr, CNCoreClrLib.ObjectMgr, CNCoreClrLib.ArrayMgr, Rtti, CrystalNet.IO.FileSystem, MLExtensions,
-  CrystalNet.Collections.Immutable.Intf;
+  CrystalNet.Collections.Immutable.Intf, MLTypeBuilder;
 
 function Join(const Separator: string; Values: TArray<Single>): string;
 var
@@ -286,6 +287,46 @@ begin
 
   // Extract the 'Features' column.
   var someColumnData := transformedData.GetColumn<TArray<Single>>(columnName).Take(numberOfRows);
+
+  // print to TConsole.NClass the peeked rows
+
+  var currentRow: Integer := 0;
+  for row in someColumnData do
+  begin
+    Inc(currentRow);
+    var concatColumn := '';
+    //Create a Converter for ML
+    var rowObject := TCoreClrObject.Create(row);
+    var rows := TCoreClrGenericArray<Single>.Create(rowObject.DefaultPointer).ToArray;
+    for f in rows do
+      concatColumn := concatColumn + FloatToStr(f);
+
+    TConsole.NClass.WriteLine();
+    rowMsg := '**** Row ' + IntToStr(currentRow) + ' with '+ columnName +' field value ****';
+    TConsole.NClass.WriteLine(rowMsg);
+    TConsole.NClass.WriteLine(concatColumn);
+    TConsole.NClass.WriteLine();
+  end;
+end;
+
+// This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
+procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorOfITransformer; numberOfRows: Integer = 4);
+var
+  row: Variant;
+  rowMsg: string;
+  f: Single;
+begin
+  var msg := TString.NClass.Format('Peek data in DataView: : Show {0} rows with just the ''{1}'' column', numberOfRows, columnName);
+  ConsoleWriteHeader([msg]);
+
+  var transformer := pipeline.DefaultInterface.Fit(dataView.DefaultInterface);
+  var transformedData := transformer.Transform(dataView.DefaultInterface);
+
+  // Extract the 'Features' column.
+  TMLTypeBuilder.Instance.RegisterType(TypeInfo(Single));
+  var m_enumerable := TMLExtensions.ColumnCursorExtensions.GetColumn(TypeInfo(Single), transformedData, ColumnName);
+  var someColumnDataList :=  TMLIteratorBlock3<Single>.Create(m_enumerable);
+  var someColumnData := someColumnDataList.Take(numberOfRows);
 
   // print to TConsole.NClass the peeked rows
 
