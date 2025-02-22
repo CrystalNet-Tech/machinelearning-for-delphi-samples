@@ -45,6 +45,14 @@ The ML.Net Core for Delphi samples are divided in multiple categories depending 
     <td align="middle"></td>
   </tr>
   <tr>
+    <td align="middle" colspan="3">Time Series Forecasting</td>
+  </tr>
+  <tr>
+    <td align="middle"><br><img src="images/sales-forcasting.png" alt="Sales ForeCasting chart"><br><b>Sales Forecasting (Time Series)<br><a href="samples/csharp/end-to-end-apps/Forecasting-Sales">Delphi</a><br><br></b></td>
+    <td></td>
+    <td></td>
+  </tr>      
+  <tr>
     <td align="middle" colspan="3">Anomaly Detection</td>
   </tr>
   <tr>
