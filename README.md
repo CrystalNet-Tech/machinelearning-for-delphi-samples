@@ -73,7 +73,7 @@ The ML.Net Core for Delphi samples are divided in multiple categories depending 
   </tr>
   <tr>
       <td align="middle"><img src="images/image-classification.png" alt="Image Classification chart"><br><b>Image Classification Training<br>    (High-Level API)<br>
-      <a href="samples/delphi/getting-started/DeepLearning_ImageClassification_Training">Delphi</a>
+      <a href="samples/Delphi/getting-started/DeepLearning_ImageClassification_Training">Delphi</a>
     </td>
     <td></td>
     <td></td>
