@@ -21,6 +21,7 @@ procedure PrintClusteringMetrics(name: string; metrics: IClusteringMetrics);
 procedure ShowDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; numberOfRows: Integer = 4);
 procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4); overload;
 procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLValueMappingEstimator; numberOfRows: Integer = 4); overload;
+procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorOfITransformer; numberOfRows: Integer = 4); overload;
 procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4);
 procedure ConsoleWriteHeader(lines: TArray<string>);
 procedure ConsoleWriterSection(lines: TArray<string>);
@@ -33,9 +34,11 @@ function Join(const Separator: string; Values: TArray<Single>): string;
 function Take(Values: IReadOnlySpan<Single>; Number: Integer): TArray<Single>;
 
 
+
 implementation
 
-uses CNCoreClrLib.RttiMgr, CNCoreClrLib.ObjectMgr, CNCoreClrLib.ArrayMgr, Rtti, CrystalNet.IO.FileSystem;
+uses CNCoreClrLib.RttiMgr, CNCoreClrLib.ObjectMgr, CNCoreClrLib.ArrayMgr, Rtti, CrystalNet.IO.FileSystem, MLExtensions,
+  CrystalNet.Collections.Immutable.Intf;
 
 function Join(const Separator: string; Values: TArray<Single>): string;
 var
@@ -269,68 +272,6 @@ begin
 end;
 
 // This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
-procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4);
-var
-  row: IMLRowInfo;
-  column: IKeyValuePair<string, Variant>;
-begin
-  var msg := TString.NClass.Format('Peek data in DataView: Showing {0} rows with the columns', numberOfRows);
-  ConsoleWriteHeader([msg]);
-
-  //https://github.com/dotnet/machinelearning/blob/main/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
-  var transformer := pipeline.Fit(dataView);
-  var transformedData := transformer.Transform(dataView);
-
-  // 'transformedData' is a 'promise' of data, lazy-loading. call Preview
-  //and iterate through the returned collection from preview.
-
-  var preViewTransformedData := transformedData.Preview(numberOfRows);
-
-  var rowViews := preViewTransformedData.RowView;
-
-  for row in rowViews do
-  begin
-    var lineToPrint := 'Row--> ';
-    for column in row.Values do
-    begin
-      lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
-    end;
-    TConsole.NClass.WriteLine(lineToPrint);
-    TConsole.NClass.WriteLine();
-  end;
-end;
-
-// This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
-procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLValueMappingEstimator; numberOfRows: Integer = 4);
-var
-  row: IMLRowInfo;
-  column: IKeyValuePair<string, Variant>;
-begin
-  var msg := TString.NClass.Format('Peek data in DataView: Showing {0} rows with the columns', numberOfRows);
-  ConsoleWriteHeader([msg]);
-
-  //https://github.com/dotnet/machinelearning/blob/main/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
-  var transformer := pipeline.Fit(dataView);
-  var transformedData := transformer.Transform(dataView);
-
-  // 'transformedData' is a 'promise' of data, lazy-loading. call Preview
-  //and iterate through the returned collection from preview.
-
-  var preViewTransformedData := transformedData.Preview(numberOfRows);
-
-  for row in preViewTransformedData.RowView do
-  begin
-    var lineToPrint := 'Row--> ';
-    for column in row.Values do
-    begin
-      lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
-    end;
-    TConsole.NClass.WriteLine(lineToPrint);
-    TConsole.NClass.WriteLine();
-  end;
-end;
-
-// This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
 procedure PeekVectorColumnDataInConsole(const mlContext: IMLContextManager; columnName: string; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4);
 var
   row: Variant;
@@ -363,6 +304,101 @@ begin
     rowMsg := '**** Row ' + IntToStr(currentRow) + ' with '+ columnName +' field value ****';
     TConsole.NClass.WriteLine(rowMsg);
     TConsole.NClass.WriteLine(concatColumn);
+    TConsole.NClass.WriteLine();
+  end;
+end;
+
+// This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
+procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorChain<IMLTransformer>; numberOfRows: Integer = 4);
+var
+  row: IMLRowInfo;
+  column: IKeyValuePair<string, Variant>;
+begin
+  var msg := TString.NClass.Format('Peek data in DataView: Showing {0} rows with the columns', numberOfRows);
+  ConsoleWriteHeader([msg]);
+
+  //https://github.com/dotnet/machinelearning/blob/main/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
+  var transformer := pipeline.Fit(dataView);
+  var transformedData := transformer.Transform(dataView);
+
+  // 'transformedData' is a 'promise' of data, lazy-loading. call Preview
+  //and iterate through the returned collection from preview.
+
+  var preViewTransformedData := transformedData.Preview(numberOfRows);
+
+  var rowViews := preViewTransformedData.RowView;
+
+  for row in rowViews do
+  begin
+    var lineToPrint := 'Row--> ';
+    for column in row.Values do
+    begin
+      lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
+    end;
+    TConsole.NClass.WriteLine(lineToPrint);
+    TConsole.NClass.WriteLine();
+  end;
+end;
+
+procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLValueMappingEstimator; numberOfRows: Integer = 4);
+var
+  row: IMLRowInfo;
+  column: IKeyValuePair<string, Variant>;
+begin
+  var msg := TString.NClass.Format('Peek data in DataView: Showing {0} rows with the columns', numberOfRows);
+  ConsoleWriteHeader([msg]);
+
+  //https://github.com/dotnet/machinelearning/blob/main/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
+  var transformer := pipeline.Fit(dataView);
+  var transformedData := transformer.Transform(dataView);
+
+  // 'transformedData' is a 'promise' of data, lazy-loading. call Preview
+  //and iterate through the returned collection from preview.
+
+  var preViewTransformedData := transformedData.Preview(numberOfRows);
+
+  for row in preViewTransformedData.RowView do
+  begin
+    var lineToPrint := 'Row--> ';
+    for column in row.Values do
+    begin
+      lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
+    end;
+    TConsole.NClass.WriteLine(lineToPrint);
+    TConsole.NClass.WriteLine();
+  end;
+end;
+
+// This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
+procedure PeekDataViewInConsole(const mlContext: IMLContextManager; dataView: IMLDataView; pipeline: IMLEstimatorOfITransformer; numberOfRows: Integer = 4);
+var
+  row: IRowInfo;
+  column: IKeyValuePair<string, Variant>;
+  rowViews: IImmutableArray<IRowInfo>;
+  I: Integer;
+begin
+  var msg := TString.NClass.Format('Peek data in DataView: Showing {0} rows with the columns', numberOfRows);
+  ConsoleWriteHeader([msg]);
+
+  //https://github.com/dotnet/machinelearning/blob/main/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
+  var transformer := pipeline.DefaultInterface.Fit(dataView.DefaultInterface);
+  var transformedData := transformer.Transform(dataView.DefaultInterface);
+
+  // 'transformedData' is a 'promise' of data, lazy-loading. call Preview
+  //and iterate through the returned collection from preview.
+
+  var preViewTransformedData := TMLExtensions.DebuggerExtensions.Preview(transformedData, numberOfRows);
+
+  rowViews := preViewTransformedData.RowView;
+  for I := 0 to rowViews.Count - 1 do
+  begin
+    row := rowViews.Item[I];
+    var lineToPrint := 'Row--> ';
+    for column in row.Values.ToArray do
+    begin
+      lineToPrint := lineToPrint + '| '+ column.Key + ':' + TObject.Wrap(column.Value).ToString;
+    end;
+    TConsole.NClass.WriteLine(lineToPrint);
     TConsole.NClass.WriteLine();
   end;
 end;
@@ -455,6 +491,11 @@ end;
 // To evaluate the accuracy of the model's predicted rankings, prints out the Discounted Cumulative Gain and Normalized Discounted Cumulative Gain for search queries.
 procedure EvaluateMetrics(const mlContext: IMLContextManager; predictions: IMLDataView);
 begin
+  // Evaluate the metrics for the data using NDCG; by default, metrics for the up to 3 search results in the query are reported (e.g. NDCG@3).
+  var metrics := mlContext.Ranking.Evaluate(predictions);
+//  TConsole.NClass.WriteLine('DCG: {string.Join(", ", metrics.DiscountedCumulativeGains.Select((d, i) => $"@{i + 1}:{d:F4}").ToArray())}');
+//  TConsole.NClass.WriteLine('NDCG: {string.Join(", ", metrics.NormalizedDiscountedCumulativeGains.Select((d, i) => $"@{i + 1}:{d:F4}").ToArray())}');
+//  TConsole.NClass.WriteLine;
 end;
 
 end.
