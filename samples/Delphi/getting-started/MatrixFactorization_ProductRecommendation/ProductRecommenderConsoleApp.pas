@@ -31,7 +31,7 @@ begin
   TrainingDataLocation := GetAbsolutePath(TrainingDataRelativePath);
 
   //STEP 1: Create MLContext to be shared across the model creation workflow objects
-  var mlContext := TMLContextManager.Create;
+  var mlContext: IMLContextManager := TMLContextManager.Create;
 
   //STEP 2: Read the trained data using TextLoader by defining the schema for reading the product co-purchase dataset
   //        Do remember to replace amazon0302.txt with dataset from https://snap.stanford.edu/data/amazon0302.html
