@@ -1,10 +1,6 @@
 # Spam Detection for Text Messages
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4           | Dynamic API | Might need to update project structure to match template | Console app | .tsv files | Spam detection | Two-class classification | Averaged Perceptron (linear learner) |
-
-In this sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to predict whether a text message is spam. In the world of machine learning, this type of prediction is known as **binary classification**.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict whether a text message is spam. In the world of machine learning, this type of prediction is known as **binary classification**.
 
 ## Problem
 
@@ -32,36 +28,50 @@ To build the model we will:
 
 The initial code is similar to the following:
 
-```CSharp
+```Delphi
 // Set up the MLContext, which is a catalog of components in ML.NET.
-MLContext mlContext = new MLContext();
+var mlContext := TMLContextManager.Create;
 
 // Specify the schema for spam data and read it into DataView.
-var data = mlContext.Data.LoadFromTextFile<SpamInput>(path: TrainDataPath, hasHeader: true, separatorChar: '\t');
+var data := mlContext.Data.LoadFromTextFile<TSpamInput>(TrainDataPath, #9, True); //#9: tab
 
 // Data process configuration with pipeline data transformations 
-var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("Label", "Label")
-                                      .Append(mlContext.Transforms.Text.FeaturizeText("FeaturesText", new Microsoft.ML.Transforms.Text.TextFeaturizingEstimator.Options
-                                      {
-                                          WordFeatureExtractor = new Microsoft.ML.Transforms.Text.WordBagEstimator.Options { NgramLength = 2, UseAllLengths = true },
-                                          CharFeatureExtractor = new Microsoft.ML.Transforms.Text.WordBagEstimator.Options { NgramLength = 3, UseAllLengths = false },
-                                      }, "Message"))
-                                      .Append(mlContext.Transforms.CopyColumns("Features", "FeaturesText"))
-                                      .Append(mlContext.Transforms.NormalizeLpNorm("Features", "Features"))
-                                      .AppendCacheCheckpoint(mlContext);
+//=>
+// Create the estimator which converts the text label to boolean, featurizes the text, and adds a linear trainer.
+// Data process configuration with pipeline data transformations
+textFeaturizingEstimatorOptions.WordFeatureExtractor := TMLWordBagEstimatorOptions.Create;
+with textFeaturizingEstimatorOptions.WordFeatureExtractor do
+begin
+  NgramLength := 2;
+  UseAllLengths := False;
+end;
+
+textFeaturizingEstimatorOptions.CharFeatureExtractor := TMLWordBagEstimatorOptions.Create;
+with textFeaturizingEstimatorOptions.CharFeatureExtractor do
+begin
+  NgramLength := 3;
+  UseAllLengths := False;
+end;
+textFeaturizingEstimatorOptions.Norm := TMLNormFunction.nfL2;
+
+var dataProcessPipeline := mlContext.Transforms.Conversion.MapValueToKey('Label', 'Label')
+                            .Append(mlContext.Transforms.Text.FeaturizeText('FeaturesText', textFeaturizingEstimatorOptions, ['Message']))
+                            .Append(mlContext.Transforms.CopyColumns('Features', 'FeaturesText'))
+                            .AppendCacheCheckpoint(mlContext);
+//<=
 
 // Set the training algorithm 
-var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: "Label", numberOfIterations: 10, featureColumnName: "Features"), labelColumnName: "Label")
-                                      .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel", "PredictedLabel"));
-var trainingPipeLine = dataProcessPipeline.Append(trainer);
+var trainer := mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.AveragedPerceptron('Label', 'Features', nil, 1, False, 0, 10))
+                          .Append(mlContext.Transforms.Conversion.MapKeyToValue('PredictedLabel', 'PredictedLabel'));
+var trainingPipeLine := dataProcessPipeline.Append(trainer);
 ```
 
 ### 2. Evaluate model
 
 For this dataset, we will use [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)) to evaluate our model. This will partition the data into 5 'folds', train 5 models (on each combination of 4 folds), and test them on the fold that wasn't used in training.
 
-```CSharp
-var crossValidationResults = mlContext.MulticlassClassification.CrossValidate(data: data, estimator: trainingPipeLine, numberOfFolds: 5);
+```Delphi
+var crossValidationResults := mlContext.MulticlassClassification.CrossValidate(data, trainingPipeLine, 5);
 ```
 
 Note that usually we evaluate a model after training it. However, cross-validation includes the model training part so we don't need to do `Fit()` first. However, we will later train the model on the full dataset to take advantage of the additional data.
@@ -69,19 +79,30 @@ Note that usually we evaluate a model after training it. However, cross-validati
 ### 3. Train model
 To train the model we will call the estimator's `Fit()` method while providing the full training data.
 
-```CSharp
-var model = trainingPipeLine.Fit(data);
+```Delphi
+var model := trainingPipeLine.Fit(data);
 ```
 
 ### 4. Consume model
 
 After the model is trained, you can use the `Predict()` API to predict whether new text is spam. 
 
-```CSharp
+```Delphi
 //Create a PredictionFunction from our model 
-var predictor = mlContext.Model.CreatePredictionEngine<SpamInput, SpamPrediction>(model);
+var predictor := mlContext.Model.CreatePredictionEngine<TSpamInput, TSpamPrediction>(model);
 
-var input = new SpamInput { Message = "free medicine winner! congratulations" };
-Console.WriteLine("The message '{0}' is {1}", input.Message, prediction.isSpam == "spam" ? "spam" : "not spam");
+var input := TSpamInput.Create;
+try
+ input.Message := message;
+ var prediction := predictor.Predict(input);
+
+ var isSpamInfo := 'not spam';
+ if TSpamPrediction(prediction).isSpam = 'spam' then
+   isSpamInfo := 'spam';
+
+ TConsole.NClass.WriteLine('The message ''{0}'' is {1}', input.Message, isSpamInfo);
+finally
+ input.Free;
+end;
 
 ```
