@@ -50,7 +50,7 @@ begin
 
   var resultprediction1 := predEngine.Predict(SampleMNISTData.MNIST1);
 
-  TConsole.NClass.WriteLine('Actual: 1     Predicted probability:       zero:  {0:0.####}', resultprediction1.Score[0]);
+  TConsole.NClass.WriteLine('Actual: 7    Predicted probability:        zero:  {0:0.####}', resultprediction1.Score[0]);
   TConsole.NClass.WriteLine('                                           One :  {0:0.####}', resultprediction1.Score[1]);
   TConsole.NClass.WriteLine('                                           two:   {0:0.####}', resultprediction1.Score[2]);
   TConsole.NClass.WriteLine('                                           three: {0:0.####}', resultprediction1.Score[3]);
