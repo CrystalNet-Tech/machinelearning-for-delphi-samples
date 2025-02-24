@@ -1,10 +1,4 @@
-# Power Consumption Anomaly Detection
-
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4           | Dynamic API | Up-to-date | Console app | .csv files | Power Meter Anomaly Detection | Time Series- Anomaly Detection | SsaSpikeDetection |
-
-In this sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to detect anomalies in time series data.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to detect anomalies in time series data.
 
 ## Problem
 This problem is focused on finding spikes in power consumption based on daily readings from a smart electric meter.
@@ -35,61 +29,61 @@ Building a model includes:
 
 The initial code is similar to the following:
 
-`````csharp
+`````Delphi
 
 // Create a common ML.NET context.
-var ml = new MLContext();
+var mlContext := TMLContextManager.Create();
 
 [...]
 
 // Create a class for the dataset
-class MeterData
-{
+TMeterData = class(TMLEntity)
+public
     [LoadColumn(0)]
-    public string name { get; set; }
+    name: string;
+
     [LoadColumn(1)]
-    public DateTime time { get; set; }
+    time: TDateTime;
+
     [LoadColumn(2)]
-    public float ConsumptionDiffNormalized { get; set; }
-}
+    ConsumptionDiffNormalized : Single;
+end;
 
 [...]
 
 // Load the data
 [...]
 
-var dataView = ml.Data.LoadFromTextFile<MeterData>(
-                TrainingData,
-                separatorChar: ',',
-                hasHeader: true);
+var dataView := mlContext.Data.LoadFromTextFile<TMeterData>(TrainingDataPath, ',', true);
 
 [...]
 
 // Prepare the Prediction output column for the model
-class SpikePrediction
-{
+TSpikePrediction = class(TMLEntity)
+public
     [VectorType(3)]
-    public double[] Prediction { get; set; }
-}
+    Prediction: TArray<Double>;
+end;
 
 [...]
 
 // Configure the Estimator
-const int PValueSize = 30;
-const int SeasonalitySize = 30;
-const int TrainingSize = 90;
-const int ConfidenceInterval = 98;
+const
+ PValueSize = 30;
+ SeasonalitySize = 30;
+ TrainingSize = 90;
+ ConfidenceInterval = 98;
 
-string outputColumnName = nameof(SpikePrediction.Prediction);
-string inputColumnName = nameof(MeterData.ConsumptionDiffNormalized);  
+var outputColumnName := 'Prediction';
+var inputColumnName := 'ConsumptionDiffNormalized';
 
-var trainigPipeLine = mlContext.Transforms.DetectSpikeBySsa(
-                outputColumnName,
-                inputColumnName,
-                confidence: ConfidenceInterval,
-                pvalueHistoryLength: PValueSize,
-                trainingWindowSize: TrainingSize,
-                seasonalityWindowSize: SeasonalitySize);
+var trainigPipeLine := mlContext.Transforms.DetectSpikeBySsa(
+    outputColumnName,
+    inputColumnName,
+    ConfidenceInterval,
+    PValueSize,
+    TrainingSize,
+    SeasonalitySize);
 
 `````
 
@@ -98,13 +92,13 @@ Training the model is a process of running the chosen algorithm on a training da
 
 To perform training you need to call the `Fit()` method while providing the training dataset (`power-export_min.csv`) in a DataView object.
 
-`````csharp    
-ITransformer trainedModel = trainigPipeLine.Fit(dataView);
+`````Delphi    
+var trainedModel := trainigPipeLine.Fit(dataView);
 `````
 
 ### 3. View the anomalies
 You can view the detected anomalies from the Time Series model by accessing the output column.
 
-`````csharp    
-var transformedData = model.Transform(dataView);
+`````Delphi    
+var transformedData := trainedModel.Transform(dataView);
 `````
