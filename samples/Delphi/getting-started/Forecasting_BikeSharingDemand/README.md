@@ -1,24 +1,6 @@
----
-page_type: sample
-name: "Forecast bike rental demand with ML.NET"
-description: "Use ML.NET's Single Spectrum Analysis (SSA) time-series forecasting algorithm to predict demand for bike rentals"
-urlFragment: "mlnet-time-series-demand-forecasting"
-languages:
-- csharp
-products:
-- dotnet
-- mlnet
----
-
 # Bike Sharing Demand - Forecasting
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.6.0 | Dynamic API | Up-to-date | Console app | SQL Server | Demand prediction | Forecasting | Single Spectrum Analysis |
-
 In this sample, you can see how to load data from a relational database using the Database Loader to train a forecasting model that predicts bike rental demand.
-
-For a detailed explanation of how to build this application, see the accompanying [tutorial](https://docs.microsoft.com/dotnet/machine-learning/tutorials/time-series-demand-forecasting) on the Microsoft Docs site.
 
 ## Problem
 
@@ -60,20 +42,24 @@ Database Loader provides a simple API to read data from relational databases dir
 To load data, you need to provide a connection string and a SQL command to get data from the database.
 
 ```csharp
-string rootDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../"));
-string dbFilePath = Path.Combine(rootDir, "Data", "DailyDemand.mdf");
-var connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={dbFilePath};Integrated Security=True;Connect Timeout=30;";
+const
+  DataRelativePath = '..\..\Data';
+  DbFileRelativePath = DataRelativePath + '\DailyDemand.mdf';
+  ModelRelativePath = DataRelativePath + '\MLModel.zip';
+[...]
 
-MLContext mlContext = new MLContext();
-DatabaseLoader loader = mlContext.Data.CreateDatabaseLoader<ModelInput>();
+var dbFilePath: string := GetAbsolutePath(DbFileRelativePath);
 
-string query = "SELECT RentalDate, CAST(Year as REAL) as Year, CAST(TotalRentals as REAL) as TotalRentals FROM Rentals;";
+var connectionString := 'Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename='+ dbFilePath +';Integrated Security=True;Connect Timeout=30;';
 
-DatabaseSource dbSource = new DatabaseSource(SqlClientFactory.Instance,
-                                            connectionString,
-                                            query);
+var mlContext: IMLContextManager := TMLContextManager.Create();
+var loader: IMLDatabaseLoader := mlContext.Data.CreateDatabaseLoader<TModelInput>();
 
-IDataView dataView = loader.Load(dbSource)
+var query: string := 'SELECT RentalDate, CAST(Year as REAL) as Year, CAST(TotalRentals as REAL) as TotalRentals FROM Rentals';
+
+var dbSource := TMLDatabaseSource.Create(TSqlClientFactory.NClass.Instance, connectionString, query);
+
+var dataView: IMLDataView := loader.Load(dbSource);
 ```
 
 ## ML task - [Regression](https://docs.microsoft.com/en-us/dotnet/machine-learning/resources/tasks#regression)
@@ -91,16 +77,9 @@ To solve this problem, you build and train an ML model on existing training data
 A time series training pipeline can be defined by using `ForecastBySsa` transform.
 
 ```csharp
-var forecastingPipeline = mlContext.Forecasting.ForecastBySsa(
-	outputColumnName: "ForecastedRentals",
-	inputColumnName: "TotalRentals",
-	windowSize: 7,
-	seriesLength: 30,
-	trainSize: 365,
-	horizon: 7,
-	confidenceLevel: 0.95f,
-	confidenceLowerBoundColumn: "LowerBoundRentals",
-	confidenceUpperBoundColumn: "UpperBoundRentals");
+var forecastingPipeline := mlContext.Forecasting.ForecastBySsa('ForecastedRentals', 'TotalRentals', 7, 30, 365, 7,
+                                                                False, 1, TMLRankSelectionMethod.rsmExact, True, False,
+                                                                nil, 'LowerBoundRentals', 'UpperBoundRentals');
 ```
 
 The `forecastingPipeline` takes 365 data points for the first year and samples or splits the time series dataset into 30-day (monthly) intervals as specified by the `seriesLength` parameter. Each of these samples is analyzed through weekly or 7-day window. When determining what the forecasted value for the next period(s) is, the values from previous seven days are used to make a prediction. The model is set to forecast seven periods into the future as defined by the `horizon` parameter. Because a forecast is an informed guess, it's not always 100% accurate. Therefore, it's good to know the range of values in the best and worst-case scenarios as defined by the upper and lower bounds. In this case, the level of confidence for the lower and upper bounds is set to 95%. The confidence level can be increased or decreased accordingly. The higher the value, the wider the range is between the upper and lower bounds to achieve the desired level of confidence.
@@ -108,7 +87,7 @@ The `forecastingPipeline` takes 365 data points for the first year and samples o
 Then, to train the model, use the `Fit` method.
 
 ```csharp
-SsaForecastingTransformer forecaster = forecastingPipeline.Fit(firstYearData);
+var forecaster: IMLSsaForecastingTransformer := forecastingPipeline.Fit(firstYearData);
 ```
 
 ## Evaluate the model
@@ -116,34 +95,50 @@ SsaForecastingTransformer forecaster = forecastingPipeline.Fit(firstYearData);
 To evaluate the model, compare use the `Transform` method to forecast future values. Then, compare them against the actual values and calculate metrics like *Mean Absolute Error* and *Root Mean Squared Error*.
 
 ```csharp
-static void Evaluate(IDataView testData, ITransformer model, MLContext mlContext)
-{
-	// Make predictions
-	IDataView predictions = model.Transform(testData);
+class procedure TBikeDemandForecastingConsoleApp.Evaluate(testData: IMLDataView;
+  model: IMLTransformer; mlContext: IMLContextManager);
+begin
+  // Make predictions
+  var predictions: IMLDataView := model.Transform(testData);
 
-	// Actual values
-	IEnumerable<float> actual =
-		mlContext.Data.CreateEnumerable<ModelInput>(testData, true)
-			.Select(observed => observed.TotalRentals);
+  // Actual values
+  var actual: Enumerable<Single> := mlContext.Data.CreateEnumerable<TModelInput>(testData, true)
+                                            .Select<Single>(function (observed: TModelInput): Single
+                                                            begin
+                                                              Result := observed.TotalRentals;
+                                                            end);
 
-	// Predicted values
-	IEnumerable<float> forecast =
-		mlContext.Data.CreateEnumerable<ModelOutput>(predictions, true)
-			.Select(prediction => prediction.ForecastedRentals[0]);
+  // Predicted values
+  var forecast: Enumerable<Single> := mlContext.Data.CreateEnumerable<TModelOutput>(predictions, true)
+                                            .Select<Single>(function (prediction: TModelOutput): Single
+                                                            begin
+                                                              Result := prediction.ForecastedRentals[0];
+                                                            end);
 
-	// Calculate error (actual - forecast)
-	var metrics = actual.Zip(forecast, (actualValue, forecastValue) => actualValue - forecastValue);
 
-	// Get metric averages
-	var MAE = metrics.Average(error => Math.Abs(error)); // Mean Absolute Error
-	var RMSE = Math.Sqrt(metrics.Average(error => Math.Pow(error, 2))); // Root Mean Squared Error
+  // Calculate error (actual - forecast)
+  var metrics := actual.Zip<Single, Single>(forecast, function (actualValue: Single; forecastValue: Single): Single
+                                                              begin
+                                                                Result := actualValue - forecastValue;
+                                                              end);
 
-	// Output metrics
-	Console.WriteLine("Evaluation Metrics");
-	Console.WriteLine("---------------------");
-	Console.WriteLine($"Mean Absolute Error: {MAE:F3}");
-	Console.WriteLine($"Root Mean Squared Error: {RMSE:F3}\n");
-}
+  // Get metric averages
+  var MAE := metrics.Average<Single>(function(error: Single): Single
+                             begin
+                               Result := TMath.NClass.Abs(error);
+                             end); // Mean Absolute Error
+
+  var RMSE := TMath.NClass.Sqrt(metrics.Average<Single>(function(error: Single): Single
+                                                        begin
+                                                          Result := TMath.NClass.Pow(error, 2);   // Root Mean Squared Error
+                                                        end));
+
+  // Output metrics
+  TConsole.NClass.WriteLine('Evaluation Metrics');
+  TConsole.NClass.WriteLine('---------------------');
+  TConsole.NClass.WriteLine('Mean Absolute Error: {0:F3}', MAE);
+  TConsole.NClass.WriteLine('Root Mean Squared Error: {0:F3}\n', RMSE);
+end;
 ```
 
 **Mean Absolute Error**: Measures how close predictions are to the actual value. This value ranges between 0 and infinity. The closer to 0, the better the quality of the model.
@@ -155,18 +150,18 @@ static void Evaluate(IDataView testData, ITransformer model, MLContext mlContext
 To forecast values, create a `TimeSeriesPredictionEngine`, a convenience API to make single predictions.
 
 ```csharp
-var forecastEngine = forecaster.CreateTimeSeriesEngine<ModelInput, ModelOutput>(mlContext);
+var forecastEngine := forecaster.CreateTimeSeriesEngine(TypeInfo(TModelInput), TypeInfo(TModelOutput), mlContext);
 ```
 
 Then, use the `Predict` method to generate a single forecast for the number of periods specified by the `horizon`.
 
 ```csharp
-static void Forecast(IDataView testData, int horizon, TimeSeriesPredictionEngine<ModelInput, ModelOutput> forecaster, MLContext mlContext)
-{
-	ModelOutput forecast = forecaster.Predict();
+class procedure TBikeDemandForecastingConsoleApp.Forecast(testData: IMLDataView; horizon: Integer; forecaster: MLTimeSeriesPredictionEngine<TMLEntity, TMLEntity>; mlContext: IMLContextManager);
+begin
+  var forecast: TModelOutput := forecaster.Predict() as TModelOutput;
 
-	//... additional code
-}
+  //... additional code
+end;
 ```
 
 ## Sample Output
