@@ -37,7 +37,7 @@ On the other hand, an anomalous behavior can be either persistent over time or j
 ## Spike Detection
 Spikes are attributed to sudden yet temporary bursts in the values of the input time-series.  In practice, they can happen due to a variety of reasons depending on the application: outages, cyber-attacks, viral web content, etc. Therefore, in many applications, it is important to detect spikes.
 
-![AnomalyDetectionSales](./docs/images/AnomalyDetectionSales.png)
+![AnomalyDetectionSales](./docs/images/SpikeDetection.png)
 
 ## Change point Detection
 ​Change points mark the beginning of more persistent deviations in the behavior of time-series from what was expected.In practice, these type of changes in the behavior of time-series are usually triggered by some fundamental changes in the dynamics of the system. For example, in system telemetry monitoring, an introduction of a memory leak can cause a (slow) trend in the time-series of memory usage after certain point in time. 
