@@ -1,10 +1,6 @@
 # Spike Detection and Change Point Detection of Product sales
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4         | Dynamic API | Up-to-date | Console app | .csv files | Product Sales Spike Detection| Time Series - Anomaly Detection | IID Spike Detection and IID Change point Detection |
-
-In this introductory sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to detect **spikes** and **change points** in Product sales. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
+In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to detect **spikes** and **change points** in Product sales. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
 
 ## Problem
 We are having data on Product sales over 3 months period in which the sales are high and normal. we identify sudden spikes in Product sales so that we can use this spiked data to analyze trends in sales of Product. 
@@ -67,26 +63,26 @@ Building a model includes:
 
 The initial code for Spike Detection is similar to the following:
 
-```CSharp
+```Delphi
 CreateEmptyDataView();
 
 //Create ML Context object
-MLContext mlcontext = new MLContext();
+var mlContext: IMLContextManager := TMLContextManager.Create();
 
 //STEP 1: Create Esimtator   
-var estimator = mlContext.Transforms.DetectIidSpike(outputColumnName: nameof(ProductSalesPrediction.Prediction), inputColumnName: nameof(ProductSalesData.numSales), confidence: 95, pvalueHistoryLength: size / 4);
+var estimator := mlContext.Transforms.DetectIidSpike('Prediction', 'numSales', 95, Trunc(size / 4));
 
 ```
 
 ### 2. Transform model
 Note that In IID Spike detection or IID change point detection, we don't need to do training, we just need to do transformation. As you are not training the model, there is no need to load IDataView with real data, you just need schema of data. So the model is created using `Fit()` API by passing **empty IDataView object**.
 
-```CSharp
+```Delphi
 //STEP 2:The Transformed Model.
 //In IID Spike detection, we don't need to do training, we just need to do transformation. 
 //As you are not training the model, there is no need to load IDataView with real data, you just need schema of data.
 //So create empty data view and pass to Fit() method. 
-ITransformer tansformedModel = estimator.Fit(CreateEmptyDataView());
+var tansformedModel := estimator.Fit(CreateEmptyDataView());
 ```
 
 ### 3. Consume model
@@ -94,28 +90,27 @@ ITransformer tansformedModel = estimator.Fit(CreateEmptyDataView());
 
 * Load the data to predict from (`product-sales.csv`) to an IDataView and create predictions.
 
-```CSharp
+```Delphi
 //Load the data into IDataView.
 //This dataset is used for detecting spikes or changes not for training.
-IDataView dataView = mlContext.Data.LoadFromTextFile<ProductSalesData>(path: DatasetPath, hasHeader: true, separatorChar: ',');
+var dataView := mlContext.Data.LoadFromTextFile<TProductSalesData>(DatasetPath, true, ',');
 
 //Apply data transformation to create predictions.
-IDataView transformedData = tansformedModel.Transform(dataView);
-var predictions = mlcontext.Data.CreateEnumerable<ProductSalesPrediction>(transformedData, reuseRowObject: false);
+var transformedData: IMLDataView := tansformedModel.Transform(dataView);
+var predictions := mlContext.Data.CreateEnumerable<TProductSalesPrediction>(transformedData, False);
           
-Console.WriteLine("Alert\tScore\tP-Value");
-foreach (var p in predictions)
-{
-    if (p.Prediction[0] == 1)
-    {
-        Console.BackgroundColor = ConsoleColor.DarkYellow;
-        Console.ForegroundColor = ConsoleColor.Black;
-    }
-    Console.WriteLine("{0}\t{1:0.00}\t{2:0.00}", p.Prediction[0], p.Prediction[1], p.Prediction[2]);
-    Console.ResetColor();
-}
-    Console.WriteLine("");
-}
+TConsole.NClass.WriteLine('Alert Score P-Value');
+for var p in predictions do
+begin
+  if p.Prediction[0] = 1 then
+  begin
+      TConsole.NClass.BackgroundColor := TConsoleColor.ccDarkYellow;
+      TConsole.NClass.ForegroundColor := TConsoleColor.ccBlack;
+  end;
+  TConsole.NClass.WriteLine('{0} {1:0.00} {2:0.00}', p.Prediction[0], p.Prediction[1], p.Prediction[2]);
+  TConsole.NClass.ResetColor();
+end;
+TConsole.NClass.WriteLine('');
 
 //sample output
 // Prediction column obtained post-transformation.
