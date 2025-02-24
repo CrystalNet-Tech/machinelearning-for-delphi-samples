@@ -28,7 +28,7 @@ const
 
 class procedure TMNISTConsoleApp.Run;
 begin
-  var mlContext := TMLContextManager.Create;
+  var mlContext: IMLContextManager := TMLContextManager.Create;
   Train(mlContext);
   TestSomePredictions(mlContext);
 
