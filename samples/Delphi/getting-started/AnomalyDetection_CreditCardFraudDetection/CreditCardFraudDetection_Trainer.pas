@@ -146,16 +146,16 @@ class function TTrainer.TrainModel(const mlContext: IMLContextManager;
   trainDataView: IMLDataView): IMLTransformer;
 begin
   // Get all the feature column names (All except the Label and the IdPreservationColumn)
-  var featureColumnNames := trainDataView.Schema.AsEnumerable()
+  var featureColumnNames: Tarray<string> := trainDataView.Schema.AsEnumerable()
 							  .Select<string>(function(column: IMLDataViewSchemaColumn): string
-											  begin
-												  Result := column.Name;     // Get all the column names
-											  end)
+									  begin
+										  Result := column.Name;     // Get all the column names
+									  end)
 							  .Where(function(name: string): Boolean
 									 begin
 									   Result := (name <> 'Label') and                 // Do not include the Label column
-												       (name <> 'IdPreservationColumn') and  // Do not include the IdPreservationColumn/StratificationColumn
-												       (name <> 'Time');                     // Do not include the Time column. Not needed as feature column
+										      (name <> 'IdPreservationColumn') and  // Do not include the IdPreservationColumn/StratificationColumn
+										      (name <> 'Time');                     // Do not include the Time column. Not needed as feature column
 									 end)
 							  .ToArray();
 
@@ -177,12 +177,12 @@ begin
   var options := TMLRandomizedPcaTrainerOptions.Create;
   with options do
   begin
-    FeatureColumnName := 'NormalizedFeatures';   // The name of the feature column. The column data must be a known-sized vector of Single.
-    ExampleWeightColumnName := null;				// The name of the example weight column (optional). To use the weight column, the column data must be of type Single.
-    Rank := 7;									// The number of components in the PCA.
-    Oversampling := 20;							// Oversampling parameter for randomized PCA training.
-    EnsureZeroMean := true;						// If enabled, data is centered to be zero mean.
-    Seed := 1;									// The seed for random number generation.
+    FeatureColumnName := 'NormalizedFeatures';  // The name of the feature column. The column data must be a known-sized vector of Single.
+    ExampleWeightColumnName := null;		// The name of the example weight column (optional). To use the weight column, the column data must be of type Single.
+    Rank := 7;					// The number of components in the PCA.
+    Oversampling := 20;				// Oversampling parameter for randomized PCA training.
+    EnsureZeroMean := true;			// If enabled, data is centered to be zero mean.
+    Seed := 1;					// The seed for random number generation.
   end;
 
 
