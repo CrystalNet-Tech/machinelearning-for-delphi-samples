@@ -1,10 +1,6 @@
 # Iris Classification
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4           | Dynamic API | Up-to-date | Console app | .txt files | Iris flowers classification | Multi-class classification | Sdca Multi-class |
-
-In this introductory sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to predict the type of iris flower. In the world of machine learning, this type of prediction is known as **multiclass classification**.
+In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict the type of iris flower. In the world of machine learning, this type of prediction is known as **multiclass classification**.
 
 ## Problem
 This problem is centered around predicting the type of an iris flower (setosa, versicolor, or virginica) based on the flower's parameters such as petal length, petal width, etc.
@@ -46,31 +42,28 @@ Building a model includes:
 
 
 The initial code is similar to the following:
-```CSharp
+```Delphi
 // Create MLContext to be shared across the model creation workflow objects 
 // Set a random seed for repeatable/deterministic results across multiple trainings.
-var mlContext = new MLContext(seed: 0);
+var mlContext: IMLContextManager := TMLContextManager.Create();
 
 // STEP 1: Common data loading configuration
-var trainingDataView = mlContext.Data.LoadFromTextFile<IrisData>(TrainDataPath, hasHeader: true);
-var testDataView = mlContext.Data.LoadFromTextFile<IrisData>(TestDataPath, hasHeader: true);
+var trainingDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TrainDataPath, #9, true);
+var testDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TestDataPath, #9, true);
 
 // STEP 2: Common data process configuration with pipeline data transformations
-var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(IrisData.Label))
-        .Append(mlContext.Transforms.Concatenate("Features", nameof(IrisData.SepalLength),
-                                                            nameof(IrisData.SepalWidth),
-                                                            nameof(IrisData.PetalLength),
-                                                            nameof(IrisData.PetalWidth))
-                                                            .AppendCacheCheckpoint(mlContext)); 
-                                                            // Use in-memory cache for small/medium datasets to lower training time. 
-                                                            // Do NOT use it (remove .AppendCacheCheckpoint()) when handling very large datasets. 
+var dataProcessPipeline := mlContext.Transforms.Conversion.MapValueToKey('KeyColumn', 'Label')
+                                        .Append(mlContext.Transforms.Concatenate('Features', ['SepalLength', 'SepalWidth', 'PetalLength',  'PetalWidth'])
+                                        .AppendCacheCheckpoint(mlContext));
+                                       // Use in-memory cache for small/medium datasets to lower training time.
+                                       // Do NOT use it (remove .AppendCacheCheckpoint()) when handling very large datasets.
 
 
 // STEP 3: Set the training algorithm, then create and config the modelBuilder                         
-var trainer = mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(labelColumnName: "KeyColumn", featureColumnName: "Features")
-            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(IrisData.Label) , inputColumnName: "KeyColumn"));
+var trainer := mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy('KeyColumn', 'Features')
+                            .Append(mlContext.Transforms.Conversion.MapKeyToValue('Label' , 'KeyColumn'));
 
-var trainingPipeline = dataProcessPipeline.Append(trainer);
+var trainingPipeline := dataProcessPipeline.Append(trainer);
 ```
 
 ### 2. Train model
@@ -78,18 +71,18 @@ Training the model is a process of running the chosen algorithm on a training da
 
 To perform training we just call the method providing the training dataset (iris-train.txt file) in a DataView object.
 
-```CSharp
+```Delphi
 // STEP 4: Train the model fitting to the DataSet            
 
-ITransformer trainedModel = trainingPipeline.Fit(trainingDataView);
+var trainedModel := trainingPipeline.Fit(trainingDataView);
 
 ```
 ### 3. Evaluate model
 We need this step to conclude how accurate our model operates on new data. To do so, the model from the previous step is run against another dataset that was not used in training (`iris-test.txt`). This dataset also contains known iris types. `MulticlassClassification.Evaluate` calculates the difference between known types and values predicted by the model in various metrics.
 
-```CSharp
-var predictions = trainedModel.Transform(testDataView);
-var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "Label", "Score");
+```Delphi
+var predictions := trainedModel.Transform(testDataView);
+var metrics := mlContext.MulticlassClassification.Evaluate(predictions, 'Label', 'Score');
 
 Common.ConsoleHelper.PrintMultiClassClassificationMetrics(trainer.ToString(), metrics);
 ```
@@ -100,16 +93,12 @@ If you are not satisfied with the quality of the model, there are a variety of w
 ### 4. Consume model
 After the model is trained, we can use the `Predict()` API to predict the probability that this flower belongs to each iris type. 
 
-```CSharp
+```Delphi
 
-ITransformer trainedModel;
-using (var stream = new FileStream(ModelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-{
-    trainedModel = mlContext.Model.Load(stream);
-}
+var trainedModel := mlContext.Model.Load(ModelPath, modelInputSchema);
 
 // Create prediction engine related to the loaded trained model
-var predEngine = trainedModel.CreatePredictionEngine<IrisData, IrisPrediction>(mlContext);
+var predEngine := mlContext.Model.CreatePredictionEngine<TIrisData, TIrisPrediction>(trainedModel);
 
 // During prediction we will get Score column with 3 float values.
 // We need to find way to map each score to original label.
@@ -117,9 +106,9 @@ var predEngine = trainedModel.CreatePredictionEngine<IrisData, IrisPrediction>(m
 // TrainingLabelValues on top of Score column represent original labels for i-th value in Score array.
 // Let's look how we can convert key value for PredictedLabel to original labels.
 // We need to read KeyValues for "PredictedLabel" column.
-VBuffer<float> keys = default;
-predEngine.OutputSchema["PredictedLabel"].GetKeyValues(ref keys);
-var labelsArray = keys.DenseValues().ToArray();
+var keys: MLVBuffer<Variant{Single}> := nil;
+predEngine.OutputSchema['PredictedLabel'].GetKeyValues(TypeInfo(Single), keys);
+var labelsArray: TArray<Single> := keys.DenseValues().Cast<Single>.ToArray;
 // Since we apply MapValueToKey estimator with default parameters, key values
 // depends on order of occurence in data file. Which is "Iris-setosa", "Iris-versicolor", "Iris-virginica"
 // So if we have Score column equal to [0.2, 0.3, 0.5] that's mean what score for
@@ -127,32 +116,35 @@ var labelsArray = keys.DenseValues().ToArray();
 // Iris-versicolor is 0.3
 // Iris-virginica is 0.5.
 //Add a dictionary to map the above float values to strings. 
-Dictionary<float, string> IrisFlowers = new Dictionary<float, string>();
-IrisFlowers.Add(0, "Setosa");
-IrisFlowers.Add(1, "versicolor");
-IrisFlowers.Add(2, "virginica");
+var IrisFlowers: TDictionary<Single, string> := TDictionary<Single, string>.Create();
+IrisFlowers.Add(0, 'Setosa');
+IrisFlowers.Add(1, 'versicolor');
+IrisFlowers.Add(2, 'virginica');
 
-Console.WriteLine("=====Predicting using model====");
+TConsole.NClass.WriteLine('=====Predicting using model====');
 //Score sample 1
-var resultprediction1 = predEngine.Predict(SampleIrisData.Iris1);
+var resultprediction1 := predEngine.Predict(SampleIrisData.Iris1);
 
-Console.WriteLine($"Actual: setosa.     Predicted label and score: {IrisFlowers[labelsArray[0]]}:      {resultprediction1.Score[0]:0.####}");
-Console.WriteLine($"                                           {IrisFlowers[labelsArray[1]]}:  {resultprediction1.Score[1]:0.####}"); Console.WriteLine($"                                           {IrisFlowers[labelsArray[2]]}:   {resultprediction1.Score[2]:0.####}");
-Console.WriteLine();
+TConsole.NClass.WriteLine('Actual: setosa.     Predicted label and score:  {0}: {1:0.####}', IrisFlowers[labelsArray[0]], resultprediction1.Score[0]);
+TConsole.NClass.WriteLine('                                                {0}: {1:0.####}', IrisFlowers[labelsArray[1]], resultprediction1.Score[1]);
+TConsole.NClass.WriteLine('                                                {0}: {1:0.####}', IrisFlowers[labelsArray[2]], resultprediction1.Score[2]);
+TConsole.NClass.WriteLine();
+
 ```
 
-Where `TestIrisData.Iris1` stores the information about the flower we'd like to predict the type for.
+Where `TSampleIrisData.Iris1` stores the information about the flower we'd like to predict the type for.
 
-```CSharp
-internal class TestIrisData
-{
-    internal static readonly IrisData Iris1 = new IrisData()
-    {
-        SepalLength = 3.3f,
-        SepalWidth = 1.6f,
-        PetalLength = 0.2f,
-        PetalWidth= 5.1f,
-    }
-    (...)
-}
+```Delphi
+[...]
+constructor TSampleIrisData.Create;
+begin
+  Iris1 := TIrisData.Create;
+  with Iris1 do
+  begin
+    SepalLength := 5.1;
+    SepalWidth := 3.3;
+    PetalLength := 1.6;
+    PetalWidth := 0.2;
+  end;
+[...]
 ```
