@@ -1,6 +1,6 @@
 # Heart disease prediction
 
-In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to predict type of heart disease. In the world of machine learning, this type of prediction is known as **binary classification**.
+In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict type of heart disease. In the world of machine learning, this type of prediction is known as **binary classification**.
 
 ## Dataset
 The dataset used is this: [UCI Heart disease] (https://archive.ics.uci.edu/ml/datasets/heart+Disease)
