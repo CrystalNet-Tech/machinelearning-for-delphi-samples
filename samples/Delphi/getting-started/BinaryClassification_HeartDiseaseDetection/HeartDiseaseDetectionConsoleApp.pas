@@ -24,10 +24,6 @@ const
   BaseModelsRelativePath = '..\..\MLModels';
   ModelRelativePath = BaseModelsRelativePath + '\HeartClassification.zip';
 
-//  TrainDataPath = 'C:\CrystalNet\CrystalNet Projects\Delphi Projects\dotNetCore4Delphi\AddOns\MLDotNet\Delphi\Projects\MLDotNetCore_Examples\HeartDiseaseDetection\Data\HeartTraining.csv';
-//  TestDataPath = 'C:\CrystalNet\CrystalNet Projects\Delphi Projects\dotNetCore4Delphi\AddOns\MLDotNet\Delphi\Projects\MLDotNetCore_Examples\HeartDiseaseDetection\Data\HeartTest.csv';
-//  ModelPath = 'C:\CrystalNet\CrystalNet Projects\Delphi Projects\dotNetCore4Delphi\AddOns\MLDotNet\Delphi\Projects\MLDotNetCore_Examples\HeartDiseaseDetection\MLModels\HeartClassification.zip';
-
 
 { THeartDiseaseDetectionConsoleApp }
 
