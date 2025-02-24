@@ -1,6 +1,6 @@
 # Spike Detection and Change Point Detection of Product sales
 
-In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to detect **spikes** and **change points** in Product sales. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to detect **spikes** and **change points** in Product sales. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
 
 ## Problem
 We are having data on Product sales over 3 months period in which the sales are high and normal. we identify sudden spikes in Product sales so that we can use this spiked data to analyze trends in sales of Product. 
