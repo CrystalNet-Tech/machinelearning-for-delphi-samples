@@ -6,7 +6,7 @@ The style of recommendation in this sample is based upon the co-purchase scenari
 bought together which means it will recommend customers a set of products based upon their purchase order
 history.
 
-![Alt Text](/Data/frequentlyboughttogether.png)
+![Alt Text](./Data/frequentlyboughttogether.png)
 
 In this example, the highlighted products are being recommended based upon a frequently bought together learning model.
 
@@ -27,7 +27,7 @@ Matrix Factorization relies on ‘Collaborative filtering’ which operates unde
 The original data comes from SNAP:
 https://snap.stanford.edu/data/amazon0302.html
 
-DataSet's Citation information can be found [here](/Data/DATASETS-CITATION.txt)
+DataSet's Citation information can be found [here](./Data/DATASETS-CITATION.txt)
 
 ## Algorithm - [Matrix Factorization (Recommendation)](https://docs.microsoft.com/en-us/dotnet/machine-learning/resources/tasks#recommendation)
 
