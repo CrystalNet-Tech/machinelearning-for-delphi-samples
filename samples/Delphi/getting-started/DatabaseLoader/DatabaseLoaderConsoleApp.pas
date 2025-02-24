@@ -13,7 +13,7 @@ type
 implementation
 
 uses DatabaseLoader_Models, MLContextMgr, System.Data.SqlClient, System.Data.SqlClient.Intf, MLData, MLTransforms, CrystalNet.Console,
-  Crystalnet.Runtime, ConsoleHelper, CrystalNet.Drawing.Primitives, CrystalNet.Data.Common.Enums;
+  Crystalnet.Runtime, ConsoleHelper, CrystalNet.Drawing.Primitives, CrystalNet.Data.Common.Enums, ComsoleHelper;
 
 const
   // Download the Criteo-100k-rows.md and Criteo-100k-rows_log.ldf from
@@ -28,7 +28,7 @@ begin
   var mlContext: IMLContextManager := TMLContextManager.Create();
 
   // localdb SQL database connection string using a filepath to attach the database file into localdb
-  var connectionString := 'Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename='+ SqlLocalDb +';Database=Criteo-100k-rows;Integrated Security = True';
+  var connectionString := 'Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename='+ GetAbsolutePath(SqlLocalDb) +';Database=Criteo-100k-rows;Integrated Security = True';
 
   // ConnString Example: localdb SQL database connection string for 'localdb default location' (usually files located at /Users/YourUser/)
   //string connectionString = @'Data Source=(localdb)\MSSQLLocalDb;Initial Catalog=YOUR_DATABASE;Integrated Security=True;Pooling=False';
