@@ -30,7 +30,7 @@ class procedure TIrisClassificationConsoleApp.Run;
 begin
   // Create MLContext to be shared across the model creation workflow objects
   // Set a random seed for repeatable/deterministic results across multiple trainings.
-  var mlContext := TMLContextManager.Create(0);
+  var mlContext: IMLContextManager := TMLContextManager.Create();
 
   //1.
   BuildTrainEvaluateAndSaveModel(mlContext);
@@ -52,8 +52,8 @@ begin
   ModelPath := GetAbsolutePath(ModelRelativePath);
 
   // STEP 1: Common data loading configuration
-  var trainingDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TrainDataPath, '	', true);
-  var testDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TestDataPath, '	', true);
+  var trainingDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TrainDataPath, #9, true);
+  var testDataView := mlContext.Data.LoadFromTextFile<TIrisData>(TestDataPath, #9, true);
 
 
   // STEP 2: Common data process configuration with pipeline data transformations
