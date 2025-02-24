@@ -149,14 +149,14 @@ begin
   var featureColumnNames := trainDataView.Schema.AsEnumerable()
 							  .Select<string>(function(column: IMLDataViewSchemaColumn): string
 							  begin
-								  Result := column.Name;     // Get all the column names
+							     Result := column.Name;     // Get all the column names
 							  end)
 							  .Where(function(name: string): Boolean
-									 begin
-									   Result := (name <> 'Label') and                 // Do not include the Label column
-				   					             (name <> 'IdPreservationColumn') and  // Do not include the IdPreservationColumn/StratificationColumn
-									             (name <> 'Time');                     // Do not include the Time column. Not needed as feature column
-									 end)
+								 begin
+								    Result := (name <> 'Label') and                 // Do not include the Label column
+				   				              (name <> 'IdPreservationColumn') and  // Do not include the IdPreservationColumn/StratificationColumn
+									      (name <> 'Time');                     // Do not include the Time column. Not needed as feature column
+								  end)
 							  .ToArray();
 
   // Create the data process pipeline
