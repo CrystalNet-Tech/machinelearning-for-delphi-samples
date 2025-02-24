@@ -1,7 +1,5 @@
 unit SpikeDetectionConsoleApp;
 
-//https://github.com/dotnet/machinelearning-samples/tree/main/samples/csharp/end-to-end-apps/AnomalyDetection-Sales
-
 interface
 
 uses MLContextMgr, SpikeDetection_Models, MLData, MLCore;
@@ -10,8 +8,8 @@ type
   TSpikeDetectionConsoleApp = class
   private
     class var mlContext: IMLContextManager;
-    class function DetectSpike(Size: Integer; DataView: IMLDataView): IMLTransformer;
-    class function DetectChangepoint(Size: Integer; DataView: IMLDataView): IMLTransformer;
+    class procedure DetectSpike(Size: Integer; DataView: IMLDataView);
+    class procedure DetectChangepoint(Size: Integer; DataView: IMLDataView);
     class procedure SaveModel(MLContext: IMLContextManager; TrainedModel: IMLTransformer; ModelPath: string; DataView: IMLDataView);
     class function CreateEmptyDataView(): IMLDataView;
   public
@@ -25,11 +23,7 @@ uses MLOptions, CrystalNet.Console, CrystalNet.Console.Enums, CrystalNet.Runtime
 
 const
   BaseDatasetsRelativePath = '..\..\Data';
-  DatasetRelativePath = BaseDatasetsRelativePath + '/Product-sales.csv';
-  BaseModelsRelativePath = '..\..\MLModels';
-  ModelRelativePath1 = BaseModelsRelativePath + '/ProductSalesSpikeModel.zip';
-  ModelRelativePath2 = BaseModelsRelativePath + '/ProductSalesChangePointModel.zip';
-
+  DatasetRelativePath = BaseDatasetsRelativePath + '\Product-sales.csv';
 
 { TSpikeDetectionConsoleApp }
 
@@ -40,8 +34,8 @@ begin
   Result := mlContext.Data.LoadFromEnumerable<TProductSalesData>(enumerableData);
 end;
 
-class function TSpikeDetectionConsoleApp.DetectChangepoint(Size: Integer;
-  DataView: IMLDataView): IMLTransformer;
+class procedure TSpikeDetectionConsoleApp.DetectChangepoint(Size: Integer;
+  DataView: IMLDataView);
 begin
   TConsole.NClass.WriteLine('===============Detect Persistent changes in pattern===============');
 
@@ -74,12 +68,10 @@ begin
     end;
   end;
   TConsole.NClass.WriteLine('');
-
-  Result := tansformedModel;
 end;
 
-class function TSpikeDetectionConsoleApp.DetectSpike(Size: Integer;
-  DataView: IMLDataView): IMLTransformer;
+class procedure TSpikeDetectionConsoleApp.DetectSpike(Size: Integer;
+  DataView: IMLDataView);
 begin
   TConsole.NClass.WriteLine('===============Detect temporary changes in pattern===============');
 
@@ -109,8 +101,6 @@ begin
     TConsole.NClass.ResetColor();
   end;
   TConsole.NClass.WriteLine('');
-
-  Result := tansformedModel;
 end;
 
 class procedure TSpikeDetectionConsoleApp.SaveModel(
@@ -124,34 +114,26 @@ begin
 end;
 
 class procedure TSpikeDetectionConsoleApp.Run;
+// Assign the Number of records in dataset file to constant variable.
 const
   size = 36;
 var
-  DatasetPath,
-  SpikeModelPath,
-  ChangePointModelPath: string;
+  DatasetPath: string;
 begin
   DatasetPath := GetAbsolutePath(DatasetRelativePath);
-  SpikeModelPath := GetAbsolutePath(ModelRelativePath1);
-  ChangePointModelPath := GetAbsolutePath(ModelRelativePath2);
 
   // Create MLContext to be shared across the model creation workflow objects.
   mlContext := TMLContextManager.Create();
 
-  // Assign the Number of records in dataset file to constant variable.
-
   // Load the data into IDataView.
   // This dataset is used for detecting spikes or changes not for training.
-  var dataView := mlContext.Data.LoadFromTextFile<TProductSalesData>(DatasetPath, true, ',');
+  var dataView := mlContext.Data.LoadFromTextFile<TProductSalesData>(DatasetPath, True, ',');
 
   // Detect temporary changes (spikes) in the pattern.
-  var trainedSpikeModel := DetectSpike(size, dataView);
+  DetectSpike(size, dataView);
 
   // Detect persistent change in the pattern.
-  var trainedChangePointModel := DetectChangepoint(size, dataView);
-
-  SaveModel(mlContext, trainedSpikeModel, SpikeModelPath, dataView);
-  SaveModel(mlContext, trainedChangePointModel, ChangePointModelPath, dataView);
+  DetectChangepoint(size, dataView);
 
   TConsole.NClass.WriteLine('=============== End of process, hit any key to finish ===============');
   TConsole.NClass.ReadLine();
