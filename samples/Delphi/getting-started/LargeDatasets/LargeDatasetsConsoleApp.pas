@@ -49,7 +49,7 @@ begin
   //Step 2: Prepare data by adding second column with value total number of features.
   PrepareDataset(originalDataPath, preparedDataPath);
 
-  var mlContext := TMLContextManager.Create();
+  var mlContext: IMLContextManager := TMLContextManager.Create();
 
   //STEP 3: Common data loading configuration
   var Path := TPath.NClass.Combine(preparedDataPath, '*');

@@ -33,7 +33,7 @@ begin
     // 2.) Time Series using Single Spectrum Analysis
     // Each of these techniques are used to forecast monthly units for the same products so that you can compare the forecasts.
 
-    var mlContext := TMLContextManager.Create(1);  //Seed set to any number so you have a deterministic environment
+    var mlContext: IMLContextManager := TMLContextManager.Create(1);  //Seed set to any number so you have a deterministic environment
 
     ConsoleWriteHeader(['Forecast using Regression model']);
 

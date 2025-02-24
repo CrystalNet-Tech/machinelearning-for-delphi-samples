@@ -8,7 +8,7 @@ uses
   System.SysUtils,
   SpamDetection_Models in 'SpamDetection_Models.pas',
   SpamDetectionConsoleApp in 'SpamDetectionConsoleApp.pas',
-  ConsoleHelper in '..\Common\ConsoleHelper.pas';
+  ConsoleHelper in '..\..\Common\ConsoleHelper.pas';
 
 begin
   try

@@ -29,7 +29,7 @@ const
 
 class procedure THeartDiseaseDetectionConsoleApp.Run;
 begin
-  var mlContext := TMLContextManager.Create();
+  var mlContext: IMLContextManager := TMLContextManager.Create();
   BuildTrainEvaluateAndSaveModel(mlContext);
 
   TestPrediction(mlContext);

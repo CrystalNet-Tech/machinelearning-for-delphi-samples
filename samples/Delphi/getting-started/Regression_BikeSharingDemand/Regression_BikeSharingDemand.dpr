@@ -5,7 +5,11 @@ program Regression_BikeSharingDemand;
 {$R *.res}
 
 uses
-  System.SysUtils;
+  System.SysUtils,
+  BikeSharingDemand_Models in 'BikeSharingDemand_Models.pas',
+  BikeSharingDemand_ModelScoringTester in 'BikeSharingDemand_ModelScoringTester.pas',
+  BikeSharingDemandConsoleApp in 'BikeSharingDemandConsoleApp.pas',
+  ConsoleHelper in '..\Common\ConsoleHelper.pas';
 
 begin
   try

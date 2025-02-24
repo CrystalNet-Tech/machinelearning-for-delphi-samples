@@ -125,7 +125,7 @@ procedure TPredictorContext.RunMultiplePredictions(numberOfPredictions: Integer)
 var
   inputSchema: IMLDataViewSchema;
 begin
-  var mlContext := TMLContextManager.Create();
+  var mlContext: IMLContextManager := TMLContextManager.Create();
 
   // Load data as input for predictions
   var inputDataForPredictions := mlContext.Data.LoadFromTextFile<TTransactionObservation>(_dasetFile, ',', True);

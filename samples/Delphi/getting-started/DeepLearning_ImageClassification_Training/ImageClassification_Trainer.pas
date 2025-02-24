@@ -94,7 +94,7 @@ begin
   var finalImagesFolderName: string := DownloadImageSet(imagesDownloadFolderPath);
   var fullImagesetFolderPath: string := TPath.NClass.Combine(imagesDownloadFolderPath, finalImagesFolderName);
 
-  var mlContext := TMLContextManager.Create(1);
+  var mlContext: IMLContextManager := TMLContextManager.Create(1);
 
   // Specify MLContext Filter to only show feedback log/traces about ImageClassification
   // This is not needed for feedback output if using the explicit MetricsCallback parameter

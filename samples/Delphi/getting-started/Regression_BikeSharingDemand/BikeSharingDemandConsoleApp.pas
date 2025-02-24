@@ -35,7 +35,7 @@ begin
 
   // Create MLContext to be shared across the model creation workflow objects
   // Set a random seed for repeatable/deterministic results across multiple trainings.
-  var mlContext := TMLContextManager.Create;
+  var mlContext: IMLContextManager := TMLContextManager.Create;
 
   // 1. Common data loading configuration
   var trainingDataView := mlContext.Data.LoadFromTextFile<TDemandObservation>(TrainingDataLocation, true, ',');

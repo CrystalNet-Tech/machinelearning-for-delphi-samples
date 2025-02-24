@@ -34,7 +34,7 @@ begin
   TestDataLocation := GetAbsolutePath(TestDataRelativePath);
 
   //STEP 1: Create MLContext to be shared across the model creation workflow objects
-  var mlcontext := TMLContextManager.Create();
+  var mlcontext: IMLContextManager := TMLContextManager.Create();
 
   //STEP 2: Read the training data which will be used to train the movie recommendation model
   //The schema for training data is defined by type 'TInput' in LoadFromTextFile<TInput>() method.

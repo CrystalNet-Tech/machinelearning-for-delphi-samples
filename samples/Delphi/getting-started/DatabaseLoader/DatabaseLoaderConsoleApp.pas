@@ -13,7 +13,7 @@ type
 implementation
 
 uses DatabaseLoader_Models, MLContextMgr, System.Data.SqlClient, System.Data.SqlClient.Intf, MLData, MLTransforms, CrystalNet.Console,
-  Crystalnet.Runtime, ConsoleHelper, CrystalNet.Drawing.Primitives, CrystalNet.Data.Common.Enums, ComsoleHelper;
+  Crystalnet.Runtime, ConsoleHelper, CrystalNet.Drawing.Primitives, CrystalNet.Data.Common.Enums;
 
 const
   // Download the Criteo-100k-rows.md and Criteo-100k-rows_log.ldf from

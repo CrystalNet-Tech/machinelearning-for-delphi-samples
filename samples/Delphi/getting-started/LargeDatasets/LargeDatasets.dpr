@@ -9,9 +9,9 @@ uses
   LargeDatasets_Models in 'LargeDatasets_Models.pas',
   LargeDatasetsConsoleApp in 'LargeDatasetsConsoleApp.pas',
   ConsoleHelper in '..\Common\ConsoleHelper.pas',
-  ICSharpCode.SharpZipLib.Consts in '..\Common\Lib\ICSharpCode.SharpZipLib.Consts.pas',
-  ICSharpCode.SharpZipLib.Intf in '..\Common\Lib\ICSharpCode.SharpZipLib.Intf.pas',
-  ICSharpCode.SharpZipLib in '..\Common\Lib\ICSharpCode.SharpZipLib.pas';
+  ICSharpCode.SharpZipLib.Consts in 'Lib\ICSharpCode.SharpZipLib.Consts.pas',
+  ICSharpCode.SharpZipLib.Intf in 'Lib\ICSharpCode.SharpZipLib.Intf.pas',
+  ICSharpCode.SharpZipLib in 'Lib\ICSharpCode.SharpZipLib.pas';
 
 begin
   try

@@ -39,7 +39,7 @@ begin
   var imageClassifierModelZipFilePath := TPath.NClass.Combine(assetsPath, 'inputs', 'MLNETModel', 'imageClassifier.zip');
 
   try
-      var mlContext := TMLContextManager.Create(1);
+      var mlContext: IMLContextManager := TMLContextManager.Create(1);
 
       TConsole.NClass.WriteLine('Loading model from: {0}', imageClassifierModelZipFilePath);
 

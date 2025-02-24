@@ -93,9 +93,9 @@
         <DCCReference Include="LargeDatasets_Models.pas"/>
         <DCCReference Include="LargeDatasetsConsoleApp.pas"/>
         <DCCReference Include="..\Common\ConsoleHelper.pas"/>
-        <DCCReference Include="..\Common\Lib\ICSharpCode.SharpZipLib.Consts.pas"/>
-        <DCCReference Include="..\Common\Lib\ICSharpCode.SharpZipLib.Intf.pas"/>
-        <DCCReference Include="..\Common\Lib\ICSharpCode.SharpZipLib.pas"/>
+        <DCCReference Include="Lib\ICSharpCode.SharpZipLib.Consts.pas"/>
+        <DCCReference Include="Lib\ICSharpCode.SharpZipLib.Intf.pas"/>
+        <DCCReference Include="Lib\ICSharpCode.SharpZipLib.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

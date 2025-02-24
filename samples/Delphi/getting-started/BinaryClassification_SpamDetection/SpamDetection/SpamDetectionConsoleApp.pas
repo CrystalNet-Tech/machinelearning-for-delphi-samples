@@ -51,7 +51,7 @@ begin
     end;
 
     // Set up the MLContext, which is a catalog of components in ML.NET.
-    var mlContext := TMLContextManager.Create;
+    var mlContext: IMLContextManager := TMLContextManager.Create;
     var textFeaturizingEstimatorOptions: IMLTextFeaturizingEstimatorOptions := TMLTextFeaturizingEstimatorOptions.Create;
     try
       // Specify the schema for spam data and read it into DataView.

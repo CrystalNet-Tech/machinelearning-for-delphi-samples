@@ -94,8 +94,7 @@
         <DCCReference Include="CreditCardFraudDetection_Predictor.pas"/>
         <DCCReference Include="CreditCardFraudDetection_Trainer.pas"/>
         <DCCReference Include="CreditCardFraudDetectionConsoleApp.pas"/>
-        <DCCReference Include="LocalConsoleHelper.pas"/>
-        <DCCReference Include="..\..\Common\ConsoleHelper.pas"/>
+        <DCCReference Include="..\Common\ConsoleHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

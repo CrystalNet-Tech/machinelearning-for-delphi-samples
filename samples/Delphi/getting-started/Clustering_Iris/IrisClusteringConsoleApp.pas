@@ -32,7 +32,7 @@ begin
   ModelPath := GetAbsolutePath(ModelRelativePath);
 
   //Create the MLContext to share across components for deterministic results
-  var mlContext := TMLContextManager.Create(0); ////Seed set to any number so you have a deterministic environment
+  var mlContext: IMLContextManager := TMLContextManager.Create(0); ////Seed set to any number so you have a deterministic environment
 
 
   // STEP 1: Common data loading configuration

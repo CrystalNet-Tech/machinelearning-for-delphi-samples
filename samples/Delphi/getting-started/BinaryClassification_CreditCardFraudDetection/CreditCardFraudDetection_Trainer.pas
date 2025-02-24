@@ -48,7 +48,7 @@ begin
 
   // Create a common ML.NET context.
   // Seed set to any number so you have a deterministic environment for repeateable results
-  var mlContext := TMLContextManager.Create(1);
+  var mlContext: IMLContextManager := TMLContextManager.Create(1);
 
   // Prepare data and create Train/Test split datasets
   PrepDatasets(mlContext, fullDataSetFilePath, trainDataSetFilePath, testDataSetFilePath);

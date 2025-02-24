@@ -63,7 +63,7 @@ begin
 
   // Create a common ML.NET context.
   // Seed set to any number so you have a deterministic environment for repeateable results.
-  var mlContext := TMLContextManager.Create(0);
+  var mlContext: IMLContextManager := TMLContextManager.Create(0);
 
   try
     PrepareData(InputPath, OutputPath, TrainDatasetPath, TrainDatasetUrl, TestDatasetUrl, TestDatasetPath, ValidationDatasetUrl, ValidationDatasetPath);
