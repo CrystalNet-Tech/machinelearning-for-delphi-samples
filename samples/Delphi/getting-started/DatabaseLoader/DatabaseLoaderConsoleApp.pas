@@ -25,7 +25,7 @@ const
 
 class procedure TDatabaseLoaderConsoleApp.Run;
 begin
-  var mlContext := TMLContextManager.Create();
+  var mlContext: IMLContextManager := TMLContextManager.Create();
 
   // localdb SQL database connection string using a filepath to attach the database file into localdb
 //  var dbFilePath := TPath.NClass.Combine(TAppDomain.NClass.CurrentDomain.BaseDirectory, 'SqlLocalDb', 'Criteo-100k-rows.mdf');
