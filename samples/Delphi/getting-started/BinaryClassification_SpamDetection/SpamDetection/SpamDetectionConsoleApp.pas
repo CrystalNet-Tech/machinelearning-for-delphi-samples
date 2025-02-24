@@ -55,7 +55,7 @@ begin
     var textFeaturizingEstimatorOptions: IMLTextFeaturizingEstimatorOptions := TMLTextFeaturizingEstimatorOptions.Create;
     try
       // Specify the schema for spam data and read it into DataView.
-      var data := mlContext.Data.LoadFromTextFile<TSpamInput>(TrainDataPath, '	', True);
+      var data := mlContext.Data.LoadFromTextFile<TSpamInput>(TrainDataPath, #9, True);
 
       // Create the estimator which converts the text label to boolean, featurizes the text, and adds a linear trainer.
       // Data process configuration with pipeline data transformations
