@@ -1,10 +1,6 @@
 # Rank search engine results
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4         | Dynamic API       | Up-to-date                    | Console app | .csv file | Ranking search engine results | Ranking          | LightGBM |
-
-This introductory sample shows how to use ML.NET to predict the best order to display search engine results. In the world of machine learning, this type of prediction is known as ranking.
+This introductory sample shows how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict the best order to display search engine results. In the world of machine learning, this type of prediction is known as ranking.
 
 ## Problem
 The ability to perform ranking is a common problem faced by search engines since users expect query results to be ranked/sorted according to their relevance. This problem extends beyond the needs of search engines to include a variety of business scenarios where personalized sorting is key to the user experience. Here are a few specific examples:
@@ -84,31 +80,38 @@ When the trainer is set, **custom gains** (or relevance gains) can also be used 
 
 The following code is used to setup the pipeline:
 
-```CSharp
-const string FeaturesVectorName = "Features";
+```Delphi
+const
+  FeaturesVectorName = 'Features';
 
 // Load the training dataset.
-IDataView trainData = mlContext.Data.LoadFromTextFile<SearchResultData>(trainDatasetPath, separatorChar: '\t', hasHeader: true);
+var separatorChar: Char := #9;
+var hasHeader:= true;
+var trainData := mlContext.Data.LoadFromTextFile<TSearchResultData>(TrainDatasetPath, separatorChar, hasHeader);
 
 // Specify the columns to include in the feature input data.
-var featureCols = trainData.Schema.AsQueryable()
-    .Select(s => s.Name)
-    .Where(c =>
-        c != nameof(SearchResultData.Label) &&
-        c != nameof(SearchResultData.GroupId))
+var featureCols := dataView.Schema.AsEnumerable()
+    .Select<string>(function(s: IMLDataViewSchemaColumn): string
+                    begin
+                      Result := s.Name;
+                    end)
+    .Where(function(c: string): Boolean
+           begin
+            Result := (c <> 'Label') and (c <> 'GroupId');
+           end)
     .ToArray();
 
 // Create an Estimator and transform the data:
 // 1. Concatenate the feature columns into a single Features vector.
 // 2. Create a key type for the label input data by using the value to key transform.
 // 3. Create a key type for the group input data by using a hash transform.
-IEstimator<ITransformer> dataPipeline = mlContext.Transforms.Concatenate(FeaturesVectorName, featureCols)
-    .Append(mlContext.Transforms.Conversion.MapValueToKey(nameof(SearchResultData.Label)))
-    .Append(mlContext.Transforms.Conversion.Hash(nameof(SearchResultData.GroupId), nameof(SearchResultData.GroupId), numberOfBits: 20));
+var dataPipeline := mlContext.Transforms.Concatenate(FeaturesVectorName, featureCols)
+    .Append(mlContext.Transforms.Conversion.MapValueToKey('Label'))
+    .Append(mlContext.Transforms.Conversion.Hash('GroupId', 'GroupId', 20));
 
 // Set the LightGBM LambdaRank trainer.
-IEstimator<ITransformer> trainer = mlContext.Ranking.Trainers.LightGbm(labelColumnName: nameof(SearchResultData.Label), featureColumnName: FeaturesVectorName, rowGroupColumnName: nameof(SearchResultData.GroupId));
-IEstimator<ITransformer> trainerPipeline = dataPipeline.Append(trainer);
+var trainer := mlContext.Ranking.Trainers.LightGbm('Label', FeaturesVectorName, 'GroupId');
+var trainerPipeline := dataPipeline.Append(trainer);
 `````
 
 ### 2. Train and Evaluate Model
@@ -127,44 +130,44 @@ With this in mind, let's look at our model's values for NDCG. In particular, let
 
 Refer to the following code used to train and evaluate the model:
 
-```CSharp
+```Delphi
 // Train the model on the training dataset. To perform training you need to call the Fit() method.
-ITransformer model = pipeline.Fit(trainData);
+var model := pipeline.Fit(trainData);
 
 // Load the validation data and use the model to perform predictions on the validation data.
-IDataView validationData = mlContext.Data.LoadFromTextFile<SearchResultData>(ValidationDatasetPath, separatorChar: '\t', hasHeader: false);
+var validationData: IMLDataView := mlContext.Data.LoadFromTextFile<TSearchResultData>(ValidationDatasetPath, separatorChar, hasHeader);
 
 [...]
 
 // Predict rankings.
-IDataView predictions = model.Transform(validationData);
+var predictions: IMLDataView := model.Transform(validationData);
 
 [...]
 
 // Evaluate the metrics for the data using NDCG; by default, metrics for the up to 3 search results in the query are reported (e.g. NDCG@3).
-RankingMetrics metrics = mlContext.Ranking.Evaluate(predictions);
+var metrics := mlContext.Ranking.Evaluate(predictions);
 `````
 ### 3. Retrain and Perform Final Evaluation of Model
 Once the desired metrics are achieved, the resulting pipeline is used to train on the combined **train + validation** datasets. We then evaluate this model one last time using the **test** dataset to get the model's final metrics.
 
 Refer to the following code:
 
-```CSharp
+```Delphi
 // Train the model on the train + validation dataset.
-model = pipeline.Fit(trainValidationData);
+model := pipeline.Fit(trainData);
 
 // Evaluate the model using the metrics from the testing dataset; you do this only once and these are your final metrics.
-IDataView testData = mlContext.Data.LoadFromTextFile<SearchResultData>(TestDatasetPath, separatorChar: '\t', hasHeader: false);
+var testData := mlContext.Data.LoadFromTextFile<TSearchResultData>(TestDatasetPath, #9, False);
 
 [...]
 
 // Predict rankings.
-IDataView predictions = model.Transform(testData);
+var predictions: IMLDataView := model.Transform(testData);
 
 [...]
 
 // Evaluate the metrics for the data using NDCG; by default, metrics for the up to 3 search results in the query are reported (e.g. NDCG@3).
-RankingMetrics metrics = mlContext.Ranking.Evaluate(predictions);
+var metrics := mlContext.Ranking.Evaluate(predictions);
 
 ```
 
@@ -174,24 +177,30 @@ The final step is to retrain the model using the all of the data, **training + v
 
 After the model is trained, we can use the `Predict()` API to predict the ranking of search engine results for a new, incoming user query.
 
-```CSharp
+```Delphi
 // Retrain the model on all of the data, train + validate + test.
-model = pipeline.Fit(allData);
+model := pipeline.Fit(allData);
 
 // Save the model
-mlContext.Model.Save(model, null, modelPath);
+mlContext.Model.Save(model, nil, modelPath);
 
 // Load the model to perform predictions with it.
-DataViewSchema predictionPipelineSchema;
-ITransformer predictionPipeline = mlContext.Model.Load(modelPath, out predictionPipelineSchema);
+var predictionPipelineSchema: IMLDataViewSchema := nil;
+var predictionPipeline := mlContext.Model.Load(modelPath, predictionPipelineSchema);
+
 
 // Predict rankings.
-IDataView predictions = predictionPipeline.Transform(data);
+var predictions := predictionPipeline.Transform(data);
 
  // In the predictions, get the scores of the search results included in the first query (e.g. group).
- IEnumerable<SearchResultPrediction> searchQueries = mlContext.Data.CreateEnumerable<SearchResultPrediction>(predictions, reuseRowObject: false);
- var firstGroupId = searchQueries.First<SearchResultPrediction>().GroupId;
- IEnumerable<SearchResultPrediction> firstGroupPredictions = searchQueries.Take(100).Where(p => p.GroupId == firstGroupId).OrderByDescending(p => p.Score).ToList();
+ var searchQueries := mlContext.Data.CreateEnumerable<TSearchResultPrediction>(predictions, False);
+ var firstGroupId := searchQueries.First().GroupId;
+ var firstGroupPredictions := searchQueries.Take(100)
+                                           .Where(function(p: TSearchResultPrediction): Boolean
+                                                  begin
+                                                    Result := p.GroupId = firstGroupId
+                                                  end);
+                                           //.OrderByDescending(p => p.Score).ToList();
 
  // The individual scores themselves are NOT a useful measure of result quality; instead, they are only useful as a relative measure to other scores in the group. 
  // The scores are used to determine the ranking where a higher score indicates a higher ranking versus another candidate result.
