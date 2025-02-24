@@ -1,10 +1,6 @@
 # Fraud detection in credit cards (based on anomaly/outlier detection)
 
-| ML.NET version | API type    | Status     | App Type         | Data type | Scenario        | ML Task           | Algorithms     |
-|----------------|-------------|------------|------------------|-----------|-----------------|-------------------|----------------|
-| v1.4         | Dynamic API | Up-to-date | Two console apps | .csv file | Fraud Detection | Anomaly Detection | Randomized PCA |
-
-In this introductory sample, you'll see how to use ML.NET to predict a credit card fraud. In the world of machine learning, this type of prediction is known as anomaly (or outlier) detection.
+In this sample, you'll see how to use ML.Net for Delphi to predict a credit card fraud. In the world of machine learning, this type of prediction is known as anomaly (or outlier) detection.
   
 
 ## API version: Dynamic and Estimators-based API
@@ -66,11 +62,11 @@ Building a model includes:
 
 The initial code is similar to the following:
 
-`````csharp
+`````Delphi
 
     // Create a common ML.NET context.
     // Seed set to any number so you have a deterministic environment for repeateable results
-    MLContext mlContext = new MLContext(seed:1);
+    var mlContext: IMLContextManager := TMLContextManager.Create(1);
 
 [...]
     // Prepare data and create Train/Test split datasets
@@ -79,52 +75,60 @@ The initial code is similar to the following:
 [...]
 
     //Load the original single dataset
-    IDataView originalFullData = mlContext.Data.LoadFromTextFile<TransactionObservation>(fullDataSetFilePath, separatorChar: er: true);
-                 
+    var originalFullData: IMLDataView := mlContext.Data.LoadFromTextFile<TTransactionObservation>(fullDataSetFilePath, ',', true);
+                
     // Split the data 80:20 into train and test sets, train and evaluate.
-    TrainTestData trainTestData = mlContext.Data.TrainTestSplit(originalFullData, testFraction: 0.2, seed: 1);
-    IDataView trainData = trainTestData.TrainSet;
-    IDataView testData = trainTestData.TestSet;
+    var trainTestData := mlContext.Data.TrainTestSplit(originalFullData, 0.2, 1);
 
+    // 80% of original dataset
+    var trainData := trainTestData.TrainSet;
+
+    // 20% of original dataset
+    var testData := trainTestData.TestSet;
     
 [...]
 
     // Get all the feature column names (All except the Label and the IdPreservationColumn)
-    string[] featureColumnNames = trainDataView.Schema.AsQueryable()
-        .Select(column => column.Name)                               // Get alll the column names
-        .Where(name => name != nameof(TransactionObservation.Label)) // Do not include the Label column
-        .Where(name => name != "IdPreservationColumn")               // Do not include the IdPreservationColumn/StratificationColumn
-        .Where(name => name != nameof(TransactionObservation.Time))  // Do not include the Time column. Not needed as feature column
-        .ToArray();
+  var featureColumnNames: Tarray<string> := trainDataView.Schema.AsEnumerable()
+							  .Select<string>(function(column: IMLDataViewSchemaColumn): string
+									  begin
+										  Result := column.Name;     // Get all the column names
+									  end)
+							  .Where(function(name: string): Boolean
+									 begin
+									   Result := (name <> 'Label') and                 // Do not include the Label column
+    										       (name <> 'IdPreservationColumn') and  // Do not include the IdPreservationColumn/StratificationColumn
+    										       (name <> 'Time');                     // Do not include the Time column. Not needed as feature column
+									 end)
+							  .ToArray();
 
     // Create the data process pipeline
-    IEstimator<ITransformer> dataProcessPipeline = mlContext.Transforms.Concatenate("Features", featureColumnNames)
-                                            .Append(mlContext.Transforms.DropColumns(new string[] { nameof(TransactionObservation.Time) }))
-                                            .Append(mlContext.Transforms.NormalizeLpNorm(outputColumnName: "NormalizedFeatures",
-                                                                                          inputColumnName: "Features"));
+    var dataProcessPipeline := mlContext.Transforms.Concatenate('Features', featureColumnNames)
+                                                             .Append(mlContext.Transforms.DropColumns(['Time']))
+                                                             .Append(mlContext.Transforms.NormalizeLpNorm('NormalizedFeatures', 'Features'));
 
 
     // In Anomaly Detection, the learner assumes all training examples have label 0, as it only learns from normal examples.
     // If any of the training examples has label 1, it is recommended to use a Filter transform to filter them out before training:
-    IDataView normalTrainDataView = mlContext.Data.FilterRowsByColumn(trainDataView, columnName: nameof(TransactionObservation.Label), lowerBound: 0, upperBound: 1);
-
+    var normalTrainDataView: IMLDataView := mlContext.Data.FilterRowsByColumn(trainDataView, 'Label', 0, 1);
+    
 [...]
 
-    var options = new RandomizedPcaTrainer.Options
-    {
-        FeatureColumnName = "NormalizedFeatures",   // The name of the feature column. The column data must be a known-sized vector of Single.
-        ExampleWeightColumnName = null,             // The name of the example weight column (optional). To use the weight column, the column data must be of type Single.
-        Rank = 28,                                  // The number of components in the PCA.
-        Oversampling = 20,                          // Oversampling parameter for randomized PCA training.
-        EnsureZeroMean = true,                      // If enabled, data is centered to be zero mean.
-        Seed = 1                                    // The seed for random number generation.
-    };
-
+    var options := TMLRandomizedPcaTrainerOptions.Create;
+    with options do
+    begin
+      FeatureColumnName := 'NormalizedFeatures';  // The name of the feature column. The column data must be a known-sized vector of Single.
+      ExampleWeightColumnName := null;		        // The name of the example weight column (optional). To use the weight column, the column data must be of type Single.
+      Rank := 7;					                        // The number of components in the PCA.
+      Oversampling := 20;				                  // Oversampling parameter for randomized PCA training.
+      EnsureZeroMean := true;			                // If enabled, data is centered to be zero mean.
+      Seed := 1;					                        // The seed for random number generation.
+    end;
 
     // Create an anomaly detector. Its underlying algorithm is randomized PCA.
-    IEstimator<ITransformer> trainer = mlContext.AnomalyDetection.Trainers.RandomizedPca(options: options);
+    var trainer := mlContext.AnomalyDetection.Trainers.RandomizedPca(options);
 
-    EstimatorChain<ITransformer> trainingPipeline = dataProcessPipeline.Append(trainer);
+    var trainingPipeline := dataProcessPipeline.Append(trainer);
 
 `````
 
@@ -135,8 +139,8 @@ Training the model is a process of running the chosen algorithm on a training da
 
 To perform training you need to call the `Fit()` method while providing the training dataset (`trainData.csv`) in a DataView object.
 
-`````csharp    
-    TransformerChain<ITransformer> model = trainingPipeline.Fit(normalTrainDataView);
+`````Delphi    
+    var model := trainingPipeline.Fit(normalTrainDataView);
 `````
 
 
@@ -146,7 +150,7 @@ We need this step to conclude how accurate our model is. To do so, the model fro
 
 `Evaluate()` compares the predicted values for the test dataset and produces various metrics, such as AUC, you can explore.
 
-`````csharp
+`````Delphi
     EvaluateModel(mlContext, model, testDataView);
 `````
 
@@ -155,41 +159,44 @@ We need this step to conclude how accurate our model is. To do so, the model fro
   
 After the model is trained, you can use the `Predict()` API to predict if a transaction is a fraud, using a IDataSet.
 
-`````csharp
+`````Delphi
 [...]
 
-    IDataView inputDataForPredictions = mlContext.Data.LoadFromTextFile<TransactionObservation>(_dasetFile, separatorChar: ',', hasHeader: true);
+    var inputDataForPredictions: IMLDataView := mlContext.Data.LoadFromTextFile<TTransactionObservation>(_dasetFile, ',', True);
 
-    ITransformer model = mlContext.Model.Load(_modelfile, out var inputSchema);
+    var model: IMLTransformer := mlContext.Model.Load(_modelfile, inputSchema);
 
-    var predictionEngine = mlContext.Model.CreatePredictionEngine<TransactionObservation, TransactionFraudPrediction>(model);
+    var predictionEngine := mlContext.Model.CreatePredictionEngine<TTransactionObservation, TTransactionFraudPrediction>(model);
 
 [...]
 
-    mlContext.Data.CreateEnumerable<TransactionObservation>(inputDataForPredictions, reuseRowObject: false)
-                  .Where(x => x.Label > 0)
-                  .Take(numberOfPredictions)
-                  .Select(testData => testData)
-                  .ToList()
-                  .ForEach(testData =>
-                                {
-                                    Console.WriteLine($"--- Transaction ---");
-                                    testData.PrintToConsole();
-                                    predictionEngine.Predict(testData).PrintToConsole();
-                                    Console.WriteLine($"-------------------");
-                                });
+    mlContext.Data.CreateEnumerable<TTransactionObservation>(inputDataForPredictions, false)
+                      .Where(function(x: TTransactionObservation): Boolean
+                             begin
+                              Result := x.&Label > 0;
+                             end)
+                      .Take(numberOfPredictions)
+                      .ForEach(procedure(testData: TTransactionObservation)
+                               begin
+                                 TConsole.NClass.WriteLine('--- Transaction ---');
+                                 testData.PrintToConsole();
+                                 predictionEngine.Predict(testData).PrintToConsole();
+                                 TConsole.NClass.WriteLine('-------------------');
+                               end);
 [...]
 
-    mlContext.Data.CreateEnumerable<TransactionObservation>(inputDataForPredictions, reuseRowObject: false)
-                  .Where(x => x.Label < 1)
-                  .Take(numberOfPredictions)
-                  .ToList()
-                  .ForEach(testData =>
-                                {
-                                    Console.WriteLine($"--- Transaction ---");
-                                    testData.PrintToConsole();
-                                    predictionEngine.Predict(testData).PrintToConsole();
-                                    Console.WriteLine($"-------------------");
-                                });
+    mlContext.Data.CreateEnumerable<TTransactionObservation>(inputDataForPredictions, false)
+                      .Where(function(x: TTransactionObservation): Boolean
+                             begin
+                              Result := x.&Label < 1;
+                             end)
+                      .Take(numberOfPredictions)
+                      .ForEach(procedure(testData: TTransactionObservation)
+                               begin
+                                 TConsole.NClass.WriteLine('--- Transaction ---');
+                                 testData.PrintToConsole();
+                                 predictionEngine.Predict(testData).PrintToConsole();
+                                 TConsole.NClass.WriteLine('-------------------');
+                               end);
 
 `````
