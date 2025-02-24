@@ -37,7 +37,7 @@ The following is a sample of the data:
 
 ## Database Loader
 
-Database Loader provides a simple API to read data from relational databases directly into an `IDataView`. This loader supports any relational database provider supported by System.Data in .NET Core or .NET Framework, meaning that you can use any RDBMS such as SQL Server, Azure SQL Database, Oracle, SQLite, PostgreSQL, MySQL, Progress, IBM DB2, etc.
+Database Loader provides a simple API to read data from relational databases directly into an `IMLDataView`. This loader supports any relational database provider supported by System.Data in .NET Core or .NET Framework, meaning that you can use any RDBMS such as SQL Server, Azure SQL Database, Oracle, SQLite, PostgreSQL, MySQL, Progress, IBM DB2, etc.
 
 To load data, you need to provide a connection string and a SQL command to get data from the database.
 
