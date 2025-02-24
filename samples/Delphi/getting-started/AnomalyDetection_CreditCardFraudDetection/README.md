@@ -1,6 +1,6 @@
 # Fraud detection in credit cards (based on anomaly/outlier detection)
 
-In this sample, you'll see how to use ML.Net for Delphi to predict a credit card fraud. In the world of machine learning, this type of prediction is known as anomaly (or outlier) detection.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict a credit card fraud. In the world of machine learning, this type of prediction is known as anomaly (or outlier) detection.
   
 
 ## API version: Dynamic and Estimators-based API
