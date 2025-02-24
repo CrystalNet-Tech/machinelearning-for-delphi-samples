@@ -24,10 +24,6 @@ uses MLOptions, CrystalNet.Console, CrystalNet.Console.Enums, CrystalNet.Runtime
 const
   BaseDatasetsRelativePath = '..\..\Data';
   DatasetRelativePath = BaseDatasetsRelativePath + '\Product-sales.csv';
-  BaseModelsRelativePath = '..\..\MLModels';
-  ModelRelativePath1 = BaseModelsRelativePath + '\ProductSalesSpikeModel.zip';
-  ModelRelativePath2 = BaseModelsRelativePath + '\ProductSalesChangePointModel.zip';
-
 
 { TSpikeDetectionConsoleApp }
 
@@ -122,13 +118,9 @@ class procedure TSpikeDetectionConsoleApp.Run;
 const
   size = 36;
 var
-  DatasetPath,
-  SpikeModelPath,
-  ChangePointModelPath: string;
+  DatasetPath: string;
 begin
   DatasetPath := GetAbsolutePath(DatasetRelativePath);
-  SpikeModelPath := GetAbsolutePath(ModelRelativePath1);
-  ChangePointModelPath := GetAbsolutePath(ModelRelativePath2);
 
   // Create MLContext to be shared across the model creation workflow objects.
   mlContext := TMLContextManager.Create();
