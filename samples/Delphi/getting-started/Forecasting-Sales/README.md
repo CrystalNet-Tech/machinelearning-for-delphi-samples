@@ -1,40 +1,6 @@
-# eShopDashboardML - Sales forecasting
+# Sales forecasting
 
-| ML.NET version | API type    | Status     | App Type                             | Data type                 | Scenario       | ML Task                 | Algorithms                                           |
-|----------------|-------------|------------|--------------------------------------|---------------------------|----------------|-------------------------|------------------------------------------------------|
-| v1.4         | Dynamic API | Up-to-date | ASP.NET Core web app and Console app | SQL Server and .csv files | Sales forecast | Regression, Time Series | FastTreeTweedie Regression, Single Spectrum Analysis |
-
-eShopDashboardML is a web app with Sales Forecast predictions (per product) using [Microsoft Machine Learning .NET (ML.NET)](https://github.com/dotnet/machinelearning).
-
-## Overview
-
-This end-to-end sample app highlights the usage of ML.NET API by showing the following topics:
-
-1. How to train, build and generate ML models:
-   - Implemented as a [console app](src/eShopForecastModelsTrainer) using .NET Core.
-2. How to predict upcoming months of sales forecasts by using the trained ML model:
-   - Implemented as a single, monolithic [web app](src/eShopDashboard) using [ASP.NET Core Razor](https://docs.microsoft.com/aspnet/core/tutorials/razor-pages/).
-
-The app is also using a SQL Server database for regular product catalog and orders info, as many typical web apps using SQL Server. In this case, since it is an example, it is, by default, using a localdb SQL database so there's no need to setup a real SQL Server. The localdb database will be created, along with sample populated data, the first time you run the web app.
-
-If you want to use a real SQL Server or Azure SQL Database, you just need to change the connection string in the app.
-
-When you run the app, it opens the webpage with a search box says "Type a product." You can type for any product, i.e. "bottle." Then a list of products related to keyword "bottle" will show in autocomplete suggestions. Once you select any product, then the sales forecast of that product will be shown as below.
-
-Here's a sample screenshot of the web app and one of the forecast predictions:
-
-![image](./docs/images/eShopDashboard.png)
-
-## Setup
-
-Learn how to set up the sample's environment in Visual Studio along with further explanations on the code:
-
-- [Setting up eShopDashboard in Visual Studio and running the web app](docs/Setting-up-eShopDashboard-in-Visual-Studio-and-running-it.md)
-
-- [Create and Train your ML models](docs/Create-and-train-the-models-%5BOptional%5D.md)
-  - This step is optional as the web app is already configured to use a pre-trained model. But you can create your own trained model and swap the pre-trained model with your own.
-
-## ML.NET Code Overview
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict whether a text message is spam. In the world of machine learning, this type of prediction is known as **forecasting**.
 
 ### Problem
 
@@ -77,47 +43,47 @@ When learning/researching the samples, you can focus choose to focus specificall
 
 Both the **Regression** and **Time Series** samples start by loading data using **TextLoader**. To use **TextLoader**, we must specify the type of the class that represents the data schema. Our class type is **ProductData**.
 
-```csharp
- public class ProductData
-    {
-        // The index of column in LoadColumn(int index) should be matched with the position of columns in the underlying data file.
-        // The next column is used by the Regression algorithm as the Label (e.g. the value that is being predicted by the Regression model).
-        [LoadColumn(0)]
-        public float next;
+```Delphi
+  TProductData = class(TMLEntity)
+  public
+    // The index of column in LoadColumn(int index) should be matched with the position of columns in the underlying data file.
+    // The next column is used by the Regression algorithm as the Label (e.g. the value that is being predicted by the Regression model).
+    [LoadColumn(0)]
+    next: Single;
 
-        [LoadColumn(1)]
-        public string productId;
+    [LoadColumn(1)]
+    productId: Single;
 
-        [LoadColumn(2)]
-        public float year;
+    [LoadColumn(2)]
+    year: Single;
 
-        [LoadColumn(3)]
-        public float month;
+    [LoadColumn(3)]
+    month: Single;
 
-        [LoadColumn(4)]
-        public float units;
+    [LoadColumn(4)]
+    units: Single;
 
-        [LoadColumn(5)]
-        public float avg;
+    [LoadColumn(5)]
+    avg: Single;
 
-        [LoadColumn(6)]
-        public float count;
+    [LoadColumn(6)]
+    count: Single;
 
-        [LoadColumn(7)]
-        public float max;
+    [LoadColumn(7)]
+    max: Single;
 
-        [LoadColumn(8)]
-        public float min;
+    [LoadColumn(8)]
+    min: Single;
 
-        [LoadColumn(9)]
-        public float prev;
-    }
+    [LoadColumn(9)]
+    prev: Single;
+ end;
 ```
 
 Load the dataset into the **DataView**.
 
-```csharp
-var trainingDataView = mlContext.Data.LoadFromTextFile<ProductData>(dataPath, hasHeader: true, separatorChar:',');
+```Delphi
+var trainingDataView := mlContext.Data.LoadFromTextFile<TProductData>(dataPath, ',', True);
 ```
 
 In the following steps, we will build the pipeline transformations, specify which trainer/algorithm to use, evaluate the models, and test their predictions. This is where the steps start to differ between the [**Regression**](#regression) and [**Time Series**](#time-series) samples - the remainder of this walkthrough looks at each of these algorithms separately.
@@ -138,25 +104,24 @@ Specifically, we do the following transformations:
 
 You can load the dataset either before or after designing the pipeline. Although this step is just configuration, it is lazy and won't be loaded until training the model in the next step.
 
-[Model build and train](./src/eShopForecastModelsTrainer/RegressionTrainer/RegressionModelHelper.cs)
+[Model build and train](./RegressionProductModelHelper.pas)
 
-```csharp
-var trainer = mlContext.Regression.Trainers.FastTreeTweedie(labelColumnName: "Label", featureColumnName: "Features");
+```Delphi
+var trainer := mlContext.Regression.Trainers.FastTreeTweedie('Label', 'Features');
 
-var trainingPipeline = mlContext.Transforms.Concatenate(outputColumnName: "NumFeatures", nameof(ProductData.year), nameof(ProductData.month), nameof(ProductData.units), nameof(ProductData.avg), nameof(ProductData.count), 
-    nameof(ProductData.max), nameof(ProductData.min), nameof(ProductData.prev) )
-        .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CatFeatures", inputColumnName: nameof(ProductData.productId)))
-        .Append(mlContext.Transforms.Concatenate(outputColumnName: "Features", "NumFeatures", "CatFeatures"))
-        .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(ProductData.next)))
-        .Append(trainer);
+var trainingPipeline := mlContext.Transforms.Concatenate('NumFeatures', ['year', 'month', 'units', 'avg', 'count', 'max', 'min', 'prev'])
+       .Append(mlContext.Transforms.Categorical.OneHotEncoding('CatFeatures', 'productId'))
+       .Append(mlContext.Transforms.Concatenate('Features', ['NumFeatures', 'CatFeatures']))
+       .Append(mlContext.Transforms.CopyColumns('Label', 'next'))
+       .Append(trainer);
 ```
 
 #### 2. Regression: Evaluate the Model
 
 In this case, the **Regression** model is evaluated before training the model with a cross-validation approach. This is to obtain metrics that indicate the accuracy of the model.
 
-```csharp
-var crossValidationResults = mlContext.Regression.CrossValidate(data:trainingDataView, estimator:trainingPipeline, numberOfFolds: 6, labelColumnName: "Label");
+```Delphi
+var crossValidationResults := mlContext.Regression.CrossValidate(trainingDataView, trainingPipeline, 6, 'Label');
 
 ConsoleHelper.PrintRegressionFoldsAverageMetrics(trainer.ToString(), crossValidationResults);
 ```
@@ -165,17 +130,16 @@ ConsoleHelper.PrintRegressionFoldsAverageMetrics(trainer.ToString(), crossValida
 
 After building the pipeline, we train the **Regression** forecast model by fitting or using the training data with the selected algorithm. In this step, the model is built, trained and returned as an object:
 
-```csharp
-var model = trainingPipeline.Fit(trainingDataView);
+```Delphi
+var model := trainingPipeline.Fit(trainingDataView);
 ```
 
 #### 4. Regression: Save the Model
 
 Once the **Regression** model is created and evaluated, you can save it into a **.zip** file which can be consumed by any end-user application with the following code:
 
-```csharp
-using (var file = File.OpenWrite(outputModelPath))
-    mlContext.Model.Save(model, trainingDataView.Schema, file);
+```Delphi
+mlContext.Model.Save(model, trainingDataView.Schema, outputModelPath);
 ```
 
 #### 5. Regression: Test the Prediction
@@ -184,24 +148,25 @@ To create a prediction, load the **Regression** model from the **.zip** file.
 
 This sample uses the last month of a product's sample data to predict the unit sales in the next month.
 
-```csharp
-ITransformer trainedModel;
-using (var stream = File.OpenRead(outputModelPath))
-{
-    trainedModel = mlContext.Model.Load(stream,out var modelInputSchema);
-}
+```Delphi
+var modelInputSchema: IMLDataViewSchema := nil;
+var trainedModel: IMLTransformer := mlContext.Model.Load(stream, modelInputSchema);
 
-var predictionEngine = mlContext.Model.CreatePredictionEngine<ProductData, ProductUnitRegressionPrediction>(trainedModel);
+var predictionEngine := mlContext.Model.CreatePredictionEngine<TProductData, TProductUnitRegressionPrediction>(trainedModel);
 
-Console.WriteLine("** Testing Product **");
+TConsole.NClass.WriteLine('** Testing Product **');
 
 // Predict the nextperiod/month forecast to the one provided
-ProductUnitRegressionPrediction prediction = predictionEngine.Predict(SampleProductData.MonthlyData[0]);
-Console.WriteLine($"Product: {SampleProductData.MonthlyData[0].productId}, month: {SampleProductData.MonthlyData[0].month + 1}, year: {SampleProductData.MonthlyData[0].year} - Real value (units): {SampleProductData.MonthlyData[0].next}, Forecast Prediction (units): {prediction.Score}");
+var prediction := predictionEngine.Predict(TSampleProductData.MonthlyData[0]);
+TConsole.NClass.WriteLine('Product: {0}, month: {1}, year: {2} - Real value (units): {3}, Forecast Prediction (units): {4}',
+  [TSampleProductData.MonthlyData[0].productId, TSampleProductData.MonthlyData[0].month + 1, TSampleProductData.MonthlyData[0].year,
+  TSampleProductData.MonthlyData[0].next, prediction.Score]);
 
 // Predicts the nextperiod/month forecast to the one provided
-prediction = predictionEngine.Predict(SampleProductData.MonthlyData[1]);
-Console.WriteLine($"Product: {SampleProductData.MonthlyData[1].productId}, month: {SampleProductData.MonthlyData[1].month + 1}, year: {SampleProductData.MonthlyData[1].year} - Forecast Prediction (units): {prediction.Score}");
+prediction := predictionEngine.Predict(TSampleProductData.MonthlyData[1]);
+TConsole.NClass.WriteLine('Product: {0}, month: {1}, year: {2} - Forecast Prediction (units): {3}',
+  [TSampleProductData.MonthlyData[1].productId, TSampleProductData.MonthlyData[1].month + 1, TSampleProductData.MonthlyData[1].year,
+  prediction.Score]);
 ```
 
 ### Time Series
@@ -229,43 +194,44 @@ Here are descriptions of the parameters:
 
 Specifically, we add the following trainer to the pipeline:
 
-```csharp
+```Delphi
 // Create and add the forecast estimator to the pipeline.
-IEstimator<ITransformer> forecastEstimator = mlContext.Forecasting.ForecastBySsa(
-    outputColumnName: nameof(ProductUnitTimeSeriesPrediction.ForecastedProductUnits),
-    inputColumnName: nameof(ProductData.units),
-    windowSize: 12,
-    seriesLength: productDataSeriesLength,
-    trainSize: productDataSeriesLength,
-    horizon: 2,
-    confidenceLevel: 0.95f,
-    confidenceLowerBoundColumn: nameof(ProductUnitTimeSeriesPrediction.ConfidenceLowerBound),
-    confidenceUpperBoundColumn: nameof(ProductUnitTimeSeriesPrediction.ConfidenceUpperBound));
+var forecastEstimator := mlContext.Forecasting.ForecastBySsa(
+      'ForecastedProductUnits',
+      'units', // This is the column being forecasted.
+      12, // Window size is set to the time period represented in the product data cycle; our product cycle is based on 12 months, so this is set to a factor of 12, e.g. 3.
+      numSeriesDataPoints, // This parameter specifies the number of data points that are used when performing a forecast.
+      numSeriesDataPoints, // This parameter specifies the total number of data points in the input time series, starting from the beginning.
+      2, // Indicates the number of values to forecast; 2 indicates that the next 2 months of product units will be forecasted.
+      False, 1, TMLRankSelectionMethod.rsmExact, True, False, nil,
+      'ConfidenceLowerBound', //This is the name of the column that will be used to store the lower interval bound for each forecasted value.
+      'ConfidenceUpperBound', //This is the name of the column that will be used to store the upper interval bound for each forecasted value.
+      0.95);
 ```
 
 #### 2. Time Series: Fit the Model
 
 Before fitting the **Time Series** model, we first must filter the loaded dataset to select the data series for the specific product that will be used for forecasting sales.
 
-```csharp
-var productId = 988;
-IDataView productDataView = mlContext.Data.FilterRowsByColumn(allProductsDataView, nameof(ProductData.productId), productId, productId + 1);
+```Delphi
+var productId: Integer = 988;
+var productDataView: IMLDataView := mlContext.Data.FilterRowsByColumn(allProductsDataView, 'productId', productId, productId + 1);
 ```
 
 Next, we fit the model to the data series for the specified product.
 
-```csharp
+```Delphi
 // Fit the forecasting model to the specified product's data series.
-ITransformer forecastTransformer = forecastEstimator.Fit(productDataView);
+var forecastTransformer: MLTransformer := forecastEstimator.Fit(productDataSeries);
 ```
 
 #### 3. Time Series: Create a CheckPoint of the Model
 
 To save the model, we first must create the **TimeSeriesPredictionEngine** which is used for both getting predictions and saving the model.  The **Time Series** model is saved using the **CheckPoint** method which saves the model to a **.zip** file that can be consumed by any end-user application.  You may notice that this is different from the above **Regression** sample which instead used the **Save** method for saving the model. **Time Series** is different because it requires that the model's state to be continuously updated with new observed values as predictions are made. As a result, the **CheckPoint** method exists to update and save the model state on a reoccurring basis. This will be shown in further detail in a later step of this sample. For now, just remember that **Checkpoint** is used for saving and updating the **Time Series** model.
 
-```csharp
+```Delphi
 // Create the forecast engine used for creating predictions.
-TimeSeriesPredictionEngine<ProductData, ProductUnitTimeSeriesPrediction> forecastEngine = forecastTransformer.CreateTimeSeriesEngine<ProductData, ProductUnitTimeSeriesPrediction>(mlContext);
+var forecastEngine: IMLTimeSeriesPredictionEngine<TProductData, TProductUnitTimeSeriesPrediction> := forecaster.CreateTimeSeriesEngine<TProductData, TProductUnitTimeSeriesPrediction>(mlContext);
 
 // Save the forecasting model so that it can be loaded within an end-user app.
 forecastEngine.CheckPoint(mlContext, outputModelPath);
@@ -275,31 +241,30 @@ forecastEngine.CheckPoint(mlContext, outputModelPath);
 
 To get a prediction, load the **Time Series** model from the **.zip** file and create a new **TimeSeriesPredictionEngine**. After this, we can get a prediction.
 
-```csharp
+```Delphi
 // Load the forecast engine that has been previously saved.
-ITransformer forecaster;
-using (var file = File.OpenRead(outputModelPath))
-{
-    forecaster = mlContext.Model.Load(file, out DataViewSchema schema);
-}
+var schema: IMLDataViewSchema := nil;
+var forecaster: MLTransformer := mlContext.Model.Load(outputModelPath,  schema);;
 
 // We must create a new prediction engine from the persisted model.
-TimeSeriesPredictionEngine<ProductData, ProductUnitTimeSeriesPrediction> forecastEngine = forecastTransformer.CreateTimeSeriesEngine<ProductData, ProductUnitTimeSeriesPrediction>(mlContext); forecastEngine = forecaster.CreateTimeSeriesEngine<ProductData, ProductUnitTimeSeriesPrediction>(mlContext);
+var forecastEngine: IMLTimeSeriesPredictionEngine<ProductData, ProductUnitTimeSeriesPrediction> := forecaster.CreateTimeSeriesEngine<TProductData, TProductUnitTimeSeriesPrediction>(mlContext);
 
-ProductUnitTimeSeriesPrediction originalSalesPrediction = forecastEngine.Predict();
+var originalSalesPrediction: TProductUnitTimeSeriesPrediction = forecastEngine.Predict();
 ```
 
 The **ProductUnitTimeSeriesPrediction** type that we specified when we created the **TimeSeriesPredictionEngine** is used to store the prediction results:
 
-```csharp
-   public class ProductUnitTimeSeriesPrediction
-    {
-        public float[] ForecastedProductUnits { get; set; }
-
-        public float[] ConfidenceLowerBound { get; set; }
-
-        public float[] ConfidenceUpperBound { get; set; }
-    }
+```Delphi
+  TProductUnitTimeSeriesPrediction = class(TMLEntity)
+  private
+    FForecastedProductUnits: TArray<Single>;
+    FConfidenceLowerBound: TArray<Single>;
+    FConfidenceUpperBound: TArray<Single>;
+  public
+    property ForecastedProductUnits: TArray<Single> read FForecastedProductUnits write FForecastedProductUnits;
+    property ConfidenceLowerBound: TArray<Single> read FConfidenceLowerBound write FConfidenceLowerBound;
+    property ConfidenceUpperBound: TArray<Single> read FConfidenceUpperBound write FConfidenceUpperBound;
+  end
 ```
 
 Remember that when we created the SSA forecasting trainer using the **ForecastBySsa** method, we provided the following parameter values:
@@ -317,16 +282,9 @@ You may notice that the **Predict** method has several overloads that accept the
 
 This is also seen in our sample:
 
-```csharp
-ProductUnitTimeSeriesPrediction updatedSalesPrediction = forecastEngine.Predict(newProductData, horizon: 1);
+```Delphi
+var updatedSalesPrediction: TProductUnitTimeSeriesPrediction := forecastEngine.Predict(TSampleProductData.MonthlyData[1], 1);
 
  // Save the updated forecasting model.
  forecastEngine.CheckPoint(mlContext, outputModelPath);
 ```
-
-// TODO: To measure accuracy of the model, we need to compare real observed values against the forecasted values.  Refer to the following issue: https://github.com/dotnet/machinelearning/issues/4184.
-
-## Citation
-
-eShopDashboardML dataset is based on a public Online Retail Dataset from **UCI**: http://archive.ics.uci.edu/ml/datasets/online+retail
-> Daqing Chen, Sai Liang Sain, and Kun Guo, Data mining for the online retail industry: A case study of RFM model-based customer segmentation using data mining, Journal of Database Marketing and Customer Strategy Management, Vol. 19, No. 3, pp. 197â€“208, 2012 (Published online before print: 27 August 2012. doi: 10.1057/dbm.2012.17).
