@@ -6,7 +6,7 @@ The style of recommendation in this sample is based upon the co-purchase scenari
 bought together which means it will recommend customers a set of products based upon their purchase order
 history.
 
-![Alt Text](https://github.com/CrystalNet-Tech/machinelearning-for-delphi-samples/tree/main/samples/Delphi/getting-started/MatrixFactorization_ProductRecommendation/Data/frequentlyboughttogether.png)
+![Alt Text](/Data/frequentlyboughttogether.png)
 
 In this example, the highlighted products are being recommended based upon a frequently bought together learning model.
 
