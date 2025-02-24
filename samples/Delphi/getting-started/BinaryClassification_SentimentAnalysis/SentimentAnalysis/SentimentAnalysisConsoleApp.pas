@@ -39,7 +39,7 @@ begin
   // Set a random seed for repeatable/deterministic results across multiple trainings.
     mlContext := TMLContextManager.Create;
     // STEP 1: Common data loading configuration
-    dataView := mlContext.Data.LoadFromTextFile<TSentimentIssue>(DataPath, '	', True);
+    dataView := mlContext.Data.LoadFromTextFile<TSentimentIssue>(DataPath, #9, True);
     trainTestSplit := mlContext.Data.TrainTestSplit(dataView, 0.2);
     trainingData := trainTestSplit.TrainSet;
     testData := trainTestSplit.TestSet;
