@@ -1,6 +1,6 @@
 # Fraud detection in credit cards (binary classification)
 
-In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to predict a credit card fraud. In the world of machine learning, this type of prediction is known as binary classification.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict a credit card fraud. In the world of machine learning, this type of prediction is known as binary classification.
 
 ## Problem
 This problem is centered around predicting if credit card transaction (with its related info/variables) is a fraud or no. 
