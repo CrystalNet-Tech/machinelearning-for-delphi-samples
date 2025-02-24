@@ -1,10 +1,6 @@
 # Bike Sharing Demand - Regression problem sample
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4 | Dynamic API | Up-to-date | Console app | .csv files | Demand prediction | Regression | Fast Tree regressor compared to additional regression algorithms|
-
-In this sample, you can see how to use ML.NET to predict the demand of bikes. Since you are trying to predict specific numeric values based on past observed data, in machine learning this type of method for prediction is known as regression.
+In this sample, you can see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to predict the demand of bikes. Since you are trying to predict specific numeric values based on past observed data, in machine learning this type of method for prediction is known as regression.
 
 ## Problem
 
