@@ -69,7 +69,7 @@ begin
     PrepareData(InputPath, OutputPath, TrainDatasetPath, TrainDatasetUrl, TestDatasetUrl, TestDatasetPath, ValidationDatasetUrl, ValidationDatasetPath);
 
     // Create the pipeline using the training data's schema; the validation and testing data have the same schema.
-    var separatorChar: Char := '	';
+    var separatorChar: Char := #9;
     var hasHeader:= true;
     var trainData := mlContext.Data.LoadFromTextFile<TSearchResultData>(TrainDatasetPath, separatorChar, hasHeader);
 
@@ -102,7 +102,7 @@ begin
     // Evaluate the model using the metrics from the testing dataset; you do this only once and these are your final metrics.
     TConsole.NClass.WriteLine('===== Evaluate the model''s result quality with the testing data =====');
     TConsole.NClass.WriteLine();
-    separatorChar := '	';
+    separatorChar := #9;
     hasHeader := false;
     var testData := mlContext.Data.LoadFromTextFile<TSearchResultData>(TestDatasetPath, separatorChar, hasHeader);
     EvaluateModel(mlContext, model, testData);
@@ -183,7 +183,7 @@ begin
              begin
               Result := (c <> 'Label') and (c <> 'GroupId');
              end)
-       .ToArray();
+      .ToArray();
 
   // Create an Estimator and transform the data:
   // 1. Concatenate the feature columns into a single Features vector.
