@@ -1,18 +1,6 @@
----
-page_type: sample
-name: "Detect anomalies in phone call volumes using ML.NET"
-description: "Use ML.NET's time series anomaly detection algorithms to detect anomalies in phone call volumes"
-urlFragment: "mlnet-time-series-anomaly-detection"
-languages:
-- csharp
-products:
-- dotnet
-- mlnet
----
-
 # Anomaly Detection of Numbers of Phone Calls
 
-In this sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to detect **anomalies** in a series of number of calls data. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
+In this sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to detect **anomalies** in a series of number of calls data. In the world of machine learning, this type of task is called TimeSeries Anomaly Detection.
 
 ## Problem
 
@@ -27,7 +15,7 @@ and outputs the anomalies in the number of calls.
 
 ## Dataset
 
-We have created sample dataset for number of calls. The dataset `phone_calls.csv` can be found [here](./SrCnnEntireDetection/Data/phone_calls.csv)
+We have created sample dataset for number of calls. The dataset `phone_calls.csv` can be found [here](./AnomalyDetection_PhoneCalls/Data/phone_calls.csv)
 
 Format of **Phone Calls DataSet** looks like below.
 
@@ -59,53 +47,52 @@ Luckily, ML.net makes the process super simple as we can see in this sample.
 
 In the first step, we invoke the `DetectSeasonality` function to obtain the period.
 
-```CSharp
-int period = mlContext.AnomalyDetection.DetectSeasonality(dataView, inputColumnName);
+```Delphi
+var period: Integer := mlContext.AnomalyDetection.DetectSeasonality(dataView, inputColumnName);
 ```
 
 ### 2. Detect Anomaly
 
 First, we need to specify the parameters used for SrCnnEntire detector(Please refer to [here](https://docs.microsoft.com/en-us/dotnet/api/microsoft.ml.timeseriescatalog.detectentireanomalybysrcnn?view=ml-dotnet#Microsoft_ML_TimeSeriesCatalog_DetectEntireAnomalyBySrCnn_Microsoft_ML_AnomalyDetectionCatalog_Microsoft_ML_IDataView_System_String_System_String_System_Double_System_Int32_System_Double_Microsoft_ML_TimeSeries_SrCnnDetectMode_) for the details on the parameters). Then, we invoke the detector and obtain a view of the output data.
 
-```CSharp
-var options = new SrCnnEntireAnomalyDetectorOptions()
-{
-    Threshold = 0.3,
-    Sensitivity = 64.0,
-    DetectMode = SrCnnDetectMode.AnomalyAndMargin,
-    Period = period,
-};
-var outputDataView = mlContext.AnomalyDetection.DetectEntireAnomalyBySrCnn(dataView, outputColumnName, inputColumnName, options);
+```Delphi
+var options := TMLSrCnnEntireAnomalyDetectorOptions.Create();
+with options do
+begin
+    Threshold := 0.3;
+    Sensitivity := 64.0;
+    DetectMode := TMLSrCnnDetectMode.scdmAnomalyAndMargin;
+    Period := period;
+end;
+var outputDataView := mlContext.AnomalyDetection.DetectEntireAnomalyBySrCnn(dataView, outputColumnName, inputColumnName, options);
 ```
 
 ### 3. Consume results
 
 The result can be retrieved by simply enumerate the result. `Anomaly`, `ExpectedValue`, `UpperBoundary` and `LowerBoundary` are some of the useful output columns.
 
-```CSharp
+```Delphi
 //STEP 5: Get the detection results as an IEnumerable
-var predictions = mlContext.Data.CreateEnumerable<PhoneCallsPrediction>(
-    outputDataView, reuseRowObject: false);
+var predictions := mlContext.Data.CreateEnumerable<TPhoneCallsPrediction>(outputDataView, false);
 
-Console.WriteLine("The anomaly detection results obtained.");
-var index = 0;
+TConsole.NClass.WriteLine('The anomaly detection results obtained.');
+var index: Integer := 0;
 
-Console.WriteLine("Index\tData\tAnomaly\tAnomalyScore\tMag\tExpectedValue\tBoundaryUnit\tUpperBoundary\tLowerBoundary");
-foreach (var p in predictions)
-{
-    if (p.Prediction[0] == 1)
-    {
-        Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7}  <-- alert is on, detecte anomaly", index,
-            p.Prediction[0], p.Prediction[1], p.Prediction[2], p.Prediction[3], p.Prediction[4], p.Prediction[5], p.Prediction[6]);
-    }
+TConsole.NClass.WriteLine('Index'+#9+'Data'+#9+'Anomaly'+#9+'AnomalyScore'+#9+'Mag'+#9+'ExpectedValue'+#9+'BoundaryUnit'+#9+'UpperBoundary'+#9+'LowerBoundary');
+for var p: TPhoneCallsPrediction in predictions do
+begin
+    if (p.Prediction[0] = 1) then
+    begin
+        TConsole.NClass.WriteLine('{0},{1},{2},{3},{4},{5},{6},{7}  <-- alert is on, detecte anomaly', [index,
+            p.Prediction[0], p.Prediction[1], p.Prediction[2], p.Prediction[3], p.Prediction[4], p.Prediction[5], p.Prediction[6]]);
+    end
     else
-    {
-        Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7}", index,
-            p.Prediction[0], p.Prediction[1], p.Prediction[2], p.Prediction[3], p.Prediction[4], p.Prediction[5], p.Prediction[6]);
-    }
-    ++index;
-
-}
+    begin
+        TConsole.NClass.WriteLine('{0},{1},{2},{3},{4},{5},{6},{7}', [index,
+            p.Prediction[0], p.Prediction[1], p.Prediction[2], p.Prediction[3], p.Prediction[4], p.Prediction[5], p.Prediction[6]]);
+    end;
+    Inc(index);
+end;
 
 //Index Data    Anomaly AnomalyScore    Mag ExpectedValue   BoundaryUnit UpperBoundary   LowerBoundary
 //0,0,0,0.012431224740909462,36.841787256739266,32.92296779138513,41.14206982401966,32.541504689458876
