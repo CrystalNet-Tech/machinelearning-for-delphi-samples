@@ -1,0 +1,264 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{3DB3EF64-9930-4A10-8563-0710B9BDE1EC}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="AnomalyDetection_CreditCardFraudDetection\AnomalyDetection_CreditCardFraudDetection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="AnomalyDetection_PhoneCalls\AnomalyDetection_PhoneCalls.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="AnomalyDetection_Sales\AnomalyDetection_Sales.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BinaryClassification_CreditCardFraudDetection\BinaryClassification_CreditCardFraudDetection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Clustering_Iris\Clustering_Iris.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DatabaseLoader\DatabaseLoader.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Forecasting-Sales\ForecastingSales.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BinaryClassification_HeartDiseaseDetection\HeartDiseaseDetection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DeepLearning_ImageClassification_Training\ImageClassification.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MulticlassClassification_Iris\IrisClassification.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="LargeDatasets\LargeDatasets.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MulticlassClassification_MNIST\MNIST.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MatrixFactorization_MovieRecommendation\MovieRecommendation.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="AnomalyDetection_PowerMeterReadings\PowerAnomalyDetection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MatrixFactorization_ProductRecommendation\ProductRecommender.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Regression_BikeSharingDemand\Regression_BikeSharingDemand.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BinaryClassification_SentimentAnalysis\SentimentAnalysis\SentimentAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BinaryClassification_SpamDetection\SpamDetection\SpamDetection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Regression_TaxiFarePrediction\TaxiFarePrediction.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Ranking_Web\WebRanking.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="AnomalyDetection_CreditCardFraudDetection">
+        <MSBuild Projects="AnomalyDetection_CreditCardFraudDetection\AnomalyDetection_CreditCardFraudDetection.dproj"/>
+    </Target>
+    <Target Name="AnomalyDetection_CreditCardFraudDetection:Clean">
+        <MSBuild Projects="AnomalyDetection_CreditCardFraudDetection\AnomalyDetection_CreditCardFraudDetection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AnomalyDetection_CreditCardFraudDetection:Make">
+        <MSBuild Projects="AnomalyDetection_CreditCardFraudDetection\AnomalyDetection_CreditCardFraudDetection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="AnomalyDetection_PhoneCalls">
+        <MSBuild Projects="AnomalyDetection_PhoneCalls\AnomalyDetection_PhoneCalls.dproj"/>
+    </Target>
+    <Target Name="AnomalyDetection_PhoneCalls:Clean">
+        <MSBuild Projects="AnomalyDetection_PhoneCalls\AnomalyDetection_PhoneCalls.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AnomalyDetection_PhoneCalls:Make">
+        <MSBuild Projects="AnomalyDetection_PhoneCalls\AnomalyDetection_PhoneCalls.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="AnomalyDetection_Sales">
+        <MSBuild Projects="AnomalyDetection_Sales\AnomalyDetection_Sales.dproj"/>
+    </Target>
+    <Target Name="AnomalyDetection_Sales:Clean">
+        <MSBuild Projects="AnomalyDetection_Sales\AnomalyDetection_Sales.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AnomalyDetection_Sales:Make">
+        <MSBuild Projects="AnomalyDetection_Sales\AnomalyDetection_Sales.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BinaryClassification_CreditCardFraudDetection">
+        <MSBuild Projects="BinaryClassification_CreditCardFraudDetection\BinaryClassification_CreditCardFraudDetection.dproj"/>
+    </Target>
+    <Target Name="BinaryClassification_CreditCardFraudDetection:Clean">
+        <MSBuild Projects="BinaryClassification_CreditCardFraudDetection\BinaryClassification_CreditCardFraudDetection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BinaryClassification_CreditCardFraudDetection:Make">
+        <MSBuild Projects="BinaryClassification_CreditCardFraudDetection\BinaryClassification_CreditCardFraudDetection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Clustering_Iris">
+        <MSBuild Projects="Clustering_Iris\Clustering_Iris.dproj"/>
+    </Target>
+    <Target Name="Clustering_Iris:Clean">
+        <MSBuild Projects="Clustering_Iris\Clustering_Iris.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Clustering_Iris:Make">
+        <MSBuild Projects="Clustering_Iris\Clustering_Iris.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DatabaseLoader">
+        <MSBuild Projects="DatabaseLoader\DatabaseLoader.dproj"/>
+    </Target>
+    <Target Name="DatabaseLoader:Clean">
+        <MSBuild Projects="DatabaseLoader\DatabaseLoader.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DatabaseLoader:Make">
+        <MSBuild Projects="DatabaseLoader\DatabaseLoader.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ForecastingSales">
+        <MSBuild Projects="Forecasting-Sales\ForecastingSales.dproj"/>
+    </Target>
+    <Target Name="ForecastingSales:Clean">
+        <MSBuild Projects="Forecasting-Sales\ForecastingSales.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ForecastingSales:Make">
+        <MSBuild Projects="Forecasting-Sales\ForecastingSales.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="HeartDiseaseDetection">
+        <MSBuild Projects="BinaryClassification_HeartDiseaseDetection\HeartDiseaseDetection.dproj"/>
+    </Target>
+    <Target Name="HeartDiseaseDetection:Clean">
+        <MSBuild Projects="BinaryClassification_HeartDiseaseDetection\HeartDiseaseDetection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="HeartDiseaseDetection:Make">
+        <MSBuild Projects="BinaryClassification_HeartDiseaseDetection\HeartDiseaseDetection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ImageClassification">
+        <MSBuild Projects="DeepLearning_ImageClassification_Training\ImageClassification.dproj"/>
+    </Target>
+    <Target Name="ImageClassification:Clean">
+        <MSBuild Projects="DeepLearning_ImageClassification_Training\ImageClassification.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ImageClassification:Make">
+        <MSBuild Projects="DeepLearning_ImageClassification_Training\ImageClassification.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IrisClassification">
+        <MSBuild Projects="MulticlassClassification_Iris\IrisClassification.dproj"/>
+    </Target>
+    <Target Name="IrisClassification:Clean">
+        <MSBuild Projects="MulticlassClassification_Iris\IrisClassification.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IrisClassification:Make">
+        <MSBuild Projects="MulticlassClassification_Iris\IrisClassification.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="LargeDatasets">
+        <MSBuild Projects="LargeDatasets\LargeDatasets.dproj"/>
+    </Target>
+    <Target Name="LargeDatasets:Clean">
+        <MSBuild Projects="LargeDatasets\LargeDatasets.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LargeDatasets:Make">
+        <MSBuild Projects="LargeDatasets\LargeDatasets.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MNIST">
+        <MSBuild Projects="MulticlassClassification_MNIST\MNIST.dproj"/>
+    </Target>
+    <Target Name="MNIST:Clean">
+        <MSBuild Projects="MulticlassClassification_MNIST\MNIST.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MNIST:Make">
+        <MSBuild Projects="MulticlassClassification_MNIST\MNIST.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MovieRecommendation">
+        <MSBuild Projects="MatrixFactorization_MovieRecommendation\MovieRecommendation.dproj"/>
+    </Target>
+    <Target Name="MovieRecommendation:Clean">
+        <MSBuild Projects="MatrixFactorization_MovieRecommendation\MovieRecommendation.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MovieRecommendation:Make">
+        <MSBuild Projects="MatrixFactorization_MovieRecommendation\MovieRecommendation.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PowerAnomalyDetection">
+        <MSBuild Projects="AnomalyDetection_PowerMeterReadings\PowerAnomalyDetection.dproj"/>
+    </Target>
+    <Target Name="PowerAnomalyDetection:Clean">
+        <MSBuild Projects="AnomalyDetection_PowerMeterReadings\PowerAnomalyDetection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PowerAnomalyDetection:Make">
+        <MSBuild Projects="AnomalyDetection_PowerMeterReadings\PowerAnomalyDetection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProductRecommender">
+        <MSBuild Projects="MatrixFactorization_ProductRecommendation\ProductRecommender.dproj"/>
+    </Target>
+    <Target Name="ProductRecommender:Clean">
+        <MSBuild Projects="MatrixFactorization_ProductRecommendation\ProductRecommender.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProductRecommender:Make">
+        <MSBuild Projects="MatrixFactorization_ProductRecommendation\ProductRecommender.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Regression_BikeSharingDemand">
+        <MSBuild Projects="Regression_BikeSharingDemand\Regression_BikeSharingDemand.dproj"/>
+    </Target>
+    <Target Name="Regression_BikeSharingDemand:Clean">
+        <MSBuild Projects="Regression_BikeSharingDemand\Regression_BikeSharingDemand.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Regression_BikeSharingDemand:Make">
+        <MSBuild Projects="Regression_BikeSharingDemand\Regression_BikeSharingDemand.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SentimentAnalysis">
+        <MSBuild Projects="BinaryClassification_SentimentAnalysis\SentimentAnalysis\SentimentAnalysis.dproj"/>
+    </Target>
+    <Target Name="SentimentAnalysis:Clean">
+        <MSBuild Projects="BinaryClassification_SentimentAnalysis\SentimentAnalysis\SentimentAnalysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SentimentAnalysis:Make">
+        <MSBuild Projects="BinaryClassification_SentimentAnalysis\SentimentAnalysis\SentimentAnalysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SpamDetection">
+        <MSBuild Projects="BinaryClassification_SpamDetection\SpamDetection\SpamDetection.dproj"/>
+    </Target>
+    <Target Name="SpamDetection:Clean">
+        <MSBuild Projects="BinaryClassification_SpamDetection\SpamDetection\SpamDetection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SpamDetection:Make">
+        <MSBuild Projects="BinaryClassification_SpamDetection\SpamDetection\SpamDetection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TaxiFarePrediction">
+        <MSBuild Projects="Regression_TaxiFarePrediction\TaxiFarePrediction.dproj"/>
+    </Target>
+    <Target Name="TaxiFarePrediction:Clean">
+        <MSBuild Projects="Regression_TaxiFarePrediction\TaxiFarePrediction.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TaxiFarePrediction:Make">
+        <MSBuild Projects="Regression_TaxiFarePrediction\TaxiFarePrediction.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="WebRanking">
+        <MSBuild Projects="Ranking_Web\WebRanking.dproj"/>
+    </Target>
+    <Target Name="WebRanking:Clean">
+        <MSBuild Projects="Ranking_Web\WebRanking.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WebRanking:Make">
+        <MSBuild Projects="Ranking_Web\WebRanking.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="AnomalyDetection_CreditCardFraudDetection;AnomalyDetection_PhoneCalls;AnomalyDetection_Sales;BinaryClassification_CreditCardFraudDetection;Clustering_Iris;DatabaseLoader;ForecastingSales;HeartDiseaseDetection;ImageClassification;IrisClassification;LargeDatasets;MNIST;MovieRecommendation;PowerAnomalyDetection;ProductRecommender;Regression_BikeSharingDemand;SentimentAnalysis;SpamDetection;TaxiFarePrediction;WebRanking"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="AnomalyDetection_CreditCardFraudDetection:Clean;AnomalyDetection_PhoneCalls:Clean;AnomalyDetection_Sales:Clean;BinaryClassification_CreditCardFraudDetection:Clean;Clustering_Iris:Clean;DatabaseLoader:Clean;ForecastingSales:Clean;HeartDiseaseDetection:Clean;ImageClassification:Clean;IrisClassification:Clean;LargeDatasets:Clean;MNIST:Clean;MovieRecommendation:Clean;PowerAnomalyDetection:Clean;ProductRecommender:Clean;Regression_BikeSharingDemand:Clean;SentimentAnalysis:Clean;SpamDetection:Clean;TaxiFarePrediction:Clean;WebRanking:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="AnomalyDetection_CreditCardFraudDetection:Make;AnomalyDetection_PhoneCalls:Make;AnomalyDetection_Sales:Make;BinaryClassification_CreditCardFraudDetection:Make;Clustering_Iris:Make;DatabaseLoader:Make;ForecastingSales:Make;HeartDiseaseDetection:Make;ImageClassification:Make;IrisClassification:Make;LargeDatasets:Make;MNIST:Make;MovieRecommendation:Make;PowerAnomalyDetection:Make;ProductRecommender:Make;Regression_BikeSharingDemand:Make;SentimentAnalysis:Make;SpamDetection:Make;TaxiFarePrediction:Make;WebRanking:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
