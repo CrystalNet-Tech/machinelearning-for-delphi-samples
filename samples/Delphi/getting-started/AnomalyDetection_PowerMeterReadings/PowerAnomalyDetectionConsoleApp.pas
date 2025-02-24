@@ -37,7 +37,7 @@ begin
   TrainingDataPath := GetAbsolutePath(TrainingDatarelativePath);
   ModelPath := GetAbsolutePath(ModelRelativePath);
 
-  var mlContext := TMLContextManager.Create(0);
+  var mlContext: IMLContextManager := TMLContextManager.Create(0);
 
   // load data
   var dataView := mlContext.Data.LoadFromTextFile<TMeterData>(TrainingDataPath, ',', true);
