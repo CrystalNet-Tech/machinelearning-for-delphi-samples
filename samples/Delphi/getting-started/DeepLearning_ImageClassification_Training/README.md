@@ -41,14 +41,7 @@ To solve this problem, first we will build an ML model. Then we will train the m
 
 ![](../shared_content/modelpipeline.png)
 
-### 1. Configure the project to use GPU or CPU
-
-By default this solution uses **CPU** for training and scoring.
-But if your machine has a compatible **GPU** available (basically most NVIDIA GPU graphics cards), you can configure the project to use GPU.
-
-> :warning: Make sure you use the correct versions of the NuGet packages listed below. Other versions might be incompatiple with Nvidia CUDA v10.0
-
-### 2. Build Model
+### 1. Build Model
 
 Building the model includes the following steps:
 * Loading the image files (file paths in this case) into an IDataView
@@ -169,7 +162,7 @@ The following is how you use the advanced DNN parameters:
 //        .Append(mlContext.Transforms.Conversion.MapKeyToValue('PredictedLabel', 'PredictedLabel'));
 ```
 
-### 3. Train model
+### 2. Train model
 In order to begin the training process you run `Fit` on the built pipeline:
 
 ```Delphi
@@ -177,7 +170,7 @@ In order to begin the training process you run `Fit` on the built pipeline:
 var trainedModel: IMLTransformer := pipeline.Fit(trainDataView);
 ```
 
-### 4. Evaluate model
+### 3. Evaluate model
 
 After the training, we evaluate the model's quality by using the test dataset.
 
