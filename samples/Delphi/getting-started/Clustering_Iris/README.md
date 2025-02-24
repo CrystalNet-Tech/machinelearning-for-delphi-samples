@@ -1,10 +1,6 @@
 # Clustering Iris Data
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4         | Dynamic API | Up-to-date | Console app | .txt file | Clustering Iris flowers | Clustering | K-means++ |
-
-In this introductory sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to divide iris flowers into different groups that correspond to different types of iris. In the world of machine learning, this task is known as **clustering**.
+In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) to divide iris flowers into different groups that correspond to different types of iris. In the world of machine learning, this task is known as **clustering**.
 
 ## Problem
 To demonstrate clustering API in action, we will use three types of iris flowers: setosa, versicolor, and virginica. All of them are stored in the same dataset. Even though the type of these flowers is known, we will not use it and run clustering algorithm only on flower parameters such as petal length, petal width, etc. The task is to group all flowers into three different clusters. We would expect the flowers of different types belong to different clusters.
@@ -31,58 +27,58 @@ To solve this problem, first we will build and train an ML model. Then we will u
 ### 1. Build model
 
 Building a model includes: uploading data (`iris-full.txt` with `TextLoader`), transforming the data so it can be used effectively by an ML algorithm (with `Concatenate`), and choosing a learning algorithm (`KMeans`). All of those steps are stored in `trainingPipeline`:
-```CSharp
+```Delphi
 //Create the MLContext to share across components for deterministic results
-MLContext mlContext = new MLContext(seed: 1);  //Seed set to any number so you have a deterministic environment
+var mlContext: IMLContextManager := TMLContextManager.Create(0); ////Seed set to any number so you have a deterministic environment
 
 // STEP 1: Common data loading configuration
-IDataView fullData = mlContext.Data.LoadFromTextFile(path: DataPath,
-                                                columns:new[]
-                                                            {
-                                                                new TextLoader.Column(DefaultColumnNames.Label, DataKind.Single, 0),
-                                                                new TextLoader.Column(nameof(IrisData.SepalLength), DataKind.Single, 1),
-                                                                new TextLoader.Column(nameof(IrisData.SepalWidth), DataKind.Single, 2),
-                                                                new TextLoader.Column(nameof(IrisData.PetalLength), DataKind.Single, 3),
-                                                                new TextLoader.Column(nameof(IrisData.PetalWidth), DataKind.Single, 4),
-                                                            },
-                                                hasHeader:true,
-                                                separatorChar:'\t');
+var TextLoaderColumns: TArray<IMLTextLoaderColumn> :=  [
+                                                        TMLTextLoaderColumn.Create('Label', TMLDataKind.dkSingle, 0),
+                                                        TMLTextLoaderColumn.Create('SepalLength', TMLDataKind.dkSingle, 1),
+                                                        TMLTextLoaderColumn.Create('SepalWidth', TMLDataKind.dkSingle, 2),
+                                                        TMLTextLoaderColumn.Create('PetalLength', TMLDataKind.dkSingle, 3),
+                                                        TMLTextLoaderColumn.Create('PetalWidth', TMLDataKind.dkSingle, 4)
+                                                       ];
+
+var fullData: IMLDataView := mlContext.Data.LoadFromTextFile(DataPath, TextLoaderColumns, True, #9{'\t'});
                                                 
 //Split dataset in two parts: TrainingDataset (80%) and TestDataset (20%)
-DataOperationsCatalog.TrainTestData trainTestData = mlContext.Data.TrainTestSplit(fullData, testFraction: 0.2);
-trainingDataView = trainTestData.TrainSet;
-testingDataView = trainTestData.TestSet;
+var trainTestData := mlContext.Data.TrainTestSplit(fullData, 0.2);
+var trainingDataView := trainTestData.TrainSet;
+var testingDataView := trainTestData.TestSet;
 
 //STEP 2: Process data transformations in pipeline
-var dataProcessPipeline = mlContext.Transforms.Concatenate("Features", nameof(IrisData.SepalLength), nameof(IrisData.SepalWidth), nameof(IrisData.PetalLength), nameof(IrisData.PetalWidth));
+var dataProcessPipeline := mlContext.Transforms.Concatenate('Features', ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth']);
 
 // STEP 3: Create and train the model     
-var trainer = mlContext.Clustering.Trainers.KMeans(featureColumnName: "Features", numberOfClusters: 3);
-var trainingPipeline = dataProcessPipeline.Append(trainer);
+var trainer := mlContext.Clustering.Trainers.KMeans('Features', '', 3);
+var trainingPipeline := dataProcessPipeline.Append(trainer);
 ```
 ### 2. Train model
 Training the model is a process of running the chosen algorithm on the given data. To perform training you need to call the Fit() method.
-```CSharp
-var trainedModel = trainingPipeline.Fit(trainingDataView);
+```Delphi
+var trainedModel := trainingPipeline.Fit(trainingDataView);
 ```
 ### 3. Consume model
 After the model is build and trained, we can use the `Predict()` API to predict the cluster for an iris flower and calculate the distance from given flower parameters to each cluster (each centroid of a cluster).
 
-```CSharp
-                // Test with one sample text 
-                var sampleIrisData = new IrisData()
-                {
-                    SepalLength = 3.3f,
-                    SepalWidth = 1.6f,
-                    PetalLength = 0.2f,
-                    PetalWidth = 5.1f,
-                };
+```Delphi
+// Test with one sample text 
+var sampleIrisData := TIrisData.Create;
+with sampleIrisData do
+begin
+  SepalLength := 3.3;
+  SepalWidth := 1.6;
+  PetalLength := 0.2;
+  PetalWidth := 5.1;
+end;
 
-                // Create prediction engine related to the loaded trained model
-                var predEngine = mlContext.Model.CreatePredictionEngine<IrisData, IrisPrediction>(model);
+// Create prediction engine related to the loaded trained model
+var predEngine := mlContext.Model.CreatePredictionEngine<TIrisData, TIrisPrediction>(model);
 
-                //Score
-                var resultprediction = predEngine.Predict(sampleIrisData);
-                
-                Console.WriteLine($"Cluster assigned for setosa flowers:" + resultprediction.SelectedClusterId);
+//Score
+var resultprediction := predEngine.Predict(sampleIrisData);
+
+TConsole.NClass.WriteLine('Cluster assigned for setosa flowers: {0}', resultprediction.SelectedClusterId);
+
 ```
