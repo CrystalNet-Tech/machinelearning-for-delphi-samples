@@ -38,10 +38,6 @@ The initial code is similar to the following:
 ```Delphi
 // STEP 1: Common data loading configuration
 var dataView: IMLDataView := mlContext.Data.LoadFromTextFile<TSentimentIssue>(DataPath, #9, True); // #9: Tab
-
- trainTestSplit = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.2);
-IDataView trainingData = trainTestSplit.TrainSet;
-IDataView testData = trainTestSplit.TestSet;
 var trainTestSplit: IMLTrainTestData := mlContext.Data.TrainTestSplit(dataView, 0.2);
 var trainingData: IMLDataView := trainTestSplit.TrainSet;
 var testData: IMLDataView := trainTestSplit.TestSet;
