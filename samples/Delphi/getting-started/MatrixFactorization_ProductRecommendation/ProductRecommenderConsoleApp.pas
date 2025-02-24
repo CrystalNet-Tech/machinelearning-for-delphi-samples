@@ -36,9 +36,11 @@ begin
   //STEP 2: Read the trained data using TextLoader by defining the schema for reading the product co-purchase dataset
   //        Do remember to replace amazon0302.txt with dataset from https://snap.stanford.edu/data/amazon0302.html
   var traindata := mlContext.Data.LoadFromTextFile(TrainingDataLocation,
-              [TMLTextLoaderColumn.Create('Label', TMLDataKind.dkSingle, 0),
-               TMLTextLoaderColumn.Create('ProductID', TMLDataKind.dkUInt32, [TMLTextLoaderRange.Create(1)], TMLKeyCount.Create(262111)),
-               TMLTextLoaderColumn.Create('CoPurchaseProductID', TMLDataKind.dkUInt32, [TMLTextLoaderRange.Create(1)], TMLKeyCount.Create(262111))], '	', True);
+              [
+                 TMLTextLoaderColumn.Create('Label', TMLDataKind.dkSingle, 0),
+                 TMLTextLoaderColumn.Create('ProductID', TMLDataKind.dkUInt32, [TMLTextLoaderRange.Create(1)], TMLKeyCount.Create(262111)),
+                 TMLTextLoaderColumn.Create('CoPurchaseProductID', TMLDataKind.dkUInt32, [TMLTextLoaderRange.Create(1)], TMLKeyCount.Create(262111))
+              ], #9, True);
 
   //STEP 3: Your data is already encoded so all you need to do is specify options for MatrxiFactorizationTrainer with a few extra hyperparameters
   //        LossFunction, Alpa, Lambda and a few others like K and C as shown below and call the trainer.
