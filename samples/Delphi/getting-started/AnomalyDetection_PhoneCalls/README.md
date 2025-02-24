@@ -15,7 +15,7 @@ and outputs the anomalies in the number of calls.
 
 ## Dataset
 
-We have created sample dataset for number of calls. The dataset `phone_calls.csv` can be found [here](./Data/phone_calls.csv)
+We have created sample dataset for number of calls. The dataset `phone_calls.csv` can be found [here](./Data/phone-calls.csv)
 
 Format of **Phone Calls DataSet** looks like below.
 
