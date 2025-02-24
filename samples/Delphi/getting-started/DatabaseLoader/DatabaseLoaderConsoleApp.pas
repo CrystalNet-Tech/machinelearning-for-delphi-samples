@@ -28,7 +28,6 @@ begin
   var mlContext: IMLContextManager := TMLContextManager.Create();
 
   // localdb SQL database connection string using a filepath to attach the database file into localdb
-//  var dbFilePath := TPath.NClass.Combine(TAppDomain.NClass.CurrentDomain.BaseDirectory, 'SqlLocalDb', 'Criteo-100k-rows.mdf');
   var connectionString := 'Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename='+ SqlLocalDb +';Database=Criteo-100k-rows;Integrated Security = True';
 
   // ConnString Example: localdb SQL database connection string for 'localdb default location' (usually files located at /Users/YourUser/)
