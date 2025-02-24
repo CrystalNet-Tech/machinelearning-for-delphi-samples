@@ -1,16 +1,12 @@
 # Heart disease prediction
 
-| ML.NET version | API type          | Status                        | App Type    | Data type | Scenario            | ML Task                   | Algorithms                  |
-|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.4           | Dynamic API | Up-to-date | Console app | .txt files | Heart disease classification | Binary classification | FastTree |
-
-In this introductory sample, you'll see how to use [ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet) to predict type of heart disease. In the world of machine learning, this type of prediction is known as **binary classification**.
+In this introductory sample, you'll see how to use [ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNetDelphi/Default) to predict type of heart disease. In the world of machine learning, this type of prediction is known as **binary classification**.
 
 ## Dataset
 The dataset used is this: [UCI Heart disease] (https://archive.ics.uci.edu/ml/datasets/heart+Disease)
 This database contains 76 attributes, but all published experiments refer to using a subset of 14 of them. 
 
-Citation for this dataset is available at [DataSets-Citation](./HeartDiseaseDetection/Data/DATASETS-CITATION.txt)
+Citation for this dataset is available at [DataSets-Citation](./Data/DATASETS-CITATION.txt)
 
 ## Problem
 This problem is centered around predicting the presence of heart disease based on 14 attributes. To solve this problem, we will build an ML model that takes as inputs 14 columns, 13 are feature columns (also called independent variables) plus the 'Label' column which is what you want to predict and in this case is named 'num': 
@@ -62,14 +58,14 @@ Building a model includes:
 
 The initial code is similar to the following:
 
-```CSharp
+```Delphi
 // STEP 1: Common data loading configuration
-var trainingDataView = mlContext.Data.LoadFromTextFile<HeartData>(TrainDataPath, hasHeader: true, separatorChar: ';');
-var testDataView = mlContext.Data.LoadFromTextFile<HeartData>(TestDataPath, hasHeader: true, separatorChar: ';');
+var trainingDataView := mlContext.Data.LoadFromTextFile<THeartData>(TrainDataPath, ';', true);
+var testDataView := mlContext.Data.LoadFromTextFile<THeartData>(TestDataPath, ';', true);
 
 // STEP 2: Concatenate the features and set the training algorithm
-var pipeline = mlContext.Transforms.Concatenate("Features", "Age", "Sex", "Cp", "TrestBps", "Chol", "Fbs", "RestEcg", "Thalac", "Exang", "OldPeak", "Slope", "Ca", "Thal")
-                .Append(mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: "Label", featureColumnName: "Features"));                         
+var pipeline := mlContext.Transforms.Concatenate('Features', ['Age', 'Sex', 'Cp', 'TrestBps', 'Chol', 'Fbs', 'RestEcg', 'Thalac', 'Exang', 'OldPeak', 'Slope', 'Ca', 'Thal'])
+                                    .Append(mlContext.BinaryClassification.Trainers.FastTree('Label', 'Features'));                      
 
 ```
 
@@ -78,8 +74,8 @@ Training the model is a process of running the chosen algorithm on a training da
 
 To perform training you need to call the `Fit()` method while providing the training dataset in a DataView object.
 
-```CSharp
-ITransformer trainedModel = pipeline.Fit(trainingDataView);
+```Delphi
+var predictions: IMLTransformer := trainedModel.Transform(testDataView);
 ```
 
 Note that ML.NET works with data with a lazy-load approach, so in reality no data is really loaded in memory until you actually call the method .Fit().
@@ -90,44 +86,48 @@ We need this step to conclude how accurate our model operates on new data. To do
 
 `Evaluate()` compares the predicted values for the test dataset and produces various metrics, such as accuracy, you can explore.
 
-```CSharp
-var predictions = trainedModel.Transform(testDataView);
-var metrics = mlContext.BinaryClassification.Evaluate(data: predictions, labelColumnName: "Label", scoreColumnName: "Score");
+```Delphi
+var predictions := trainedModel.Transform(testDataView);
+var metrics := mlContext.BinaryClassification.Evaluate(predictions, 'Label', 'Score');
 ```
 
 ### 4. Consume model
 
 After the model is trained, you can use the `Predict()` API to predict if heart disease is present for a list of heart data set. 
 
-```CSharp
+```Delphi
 // Create prediction engine related to the loaded trained model
-var predictionEngine = mlContext.Model.CreatePredictionEngine<HeartData, HeartPrediction>(trainedModel);                   
+var predictionEngine := mlContext.Model.CreatePredictionEngine<THeartData, THeartPrediction>(trainedModel);
 
-foreach (var heartData in HeartSampleData.heartDataList)
-            {
-                var prediction = predictionEngine.Predict(heartData);
+for heartData in HeartSampleData.heartDataList do
+begin
+  var prediction := predictionEngine.Predict(heartData);
 
-                Console.WriteLine($"=============== Single Prediction  ===============");
-                Console.WriteLine($"Age: {heartData.Age} ");
-                Console.WriteLine($"Sex: {heartData.Sex} ");
-                Console.WriteLine($"Cp: {heartData.Cp} ");
-                Console.WriteLine($"TrestBps: {heartData.TrestBps} ");
-                Console.WriteLine($"Chol: {heartData.Chol} ");
-                Console.WriteLine($"Fbs: {heartData.Fbs} ");
-                Console.WriteLine($"RestEcg: {heartData.RestEcg} ");
-                Console.WriteLine($"Thalac: {heartData.Thalac} ");
-                Console.WriteLine($"Exang: {heartData.Exang} ");
-                Console.WriteLine($"OldPeak: {heartData.OldPeak} ");
-                Console.WriteLine($"Slope: {heartData.Slope} ");
-                Console.WriteLine($"Ca: {heartData.Ca} ");
-                Console.WriteLine($"Thal: {heartData.Thal} ");
-                Console.WriteLine($"Prediction Value: {prediction.Prediction} ");
-                Console.WriteLine($"Prediction: {(prediction.Prediction ? "A disease could be present" : "Not present disease" )} ");
-                Console.WriteLine($"Probability: {prediction.Probability} ");
-                Console.WriteLine($"==================================================");
-                Console.WriteLine("");
-                Console.WriteLine("");
-            }
+  TConsole.NClass.WriteLine('=============== Single Prediction  ===============');
+  TConsole.NClass.WriteLine('Age: {0} ', heartData.Age);
+  TConsole.NClass.WriteLine('Sex: {0} ', heartData.Sex);
+  TConsole.NClass.WriteLine('Cp: {0} ', heartData.Cp);
+  TConsole.NClass.WriteLine('TrestBps: {0} ', heartData.TrestBps);
+  TConsole.NClass.WriteLine('Chol: {0} ', heartData.Chol);
+  TConsole.NClass.WriteLine('Fbs: {0} ', heartData.Fbs);
+  TConsole.NClass.WriteLine('RestEcg: {0} ', heartData.RestEcg);
+  TConsole.NClass.WriteLine('Thalac: {0} ', heartData.Thalac);
+  TConsole.NClass.WriteLine('Exang: {0} ', heartData.Exang);
+  TConsole.NClass.WriteLine('OldPeak: {0} ', heartData.OldPeak);
+  TConsole.NClass.WriteLine('Slope: {0} ', heartData.Slope);
+  TConsole.NClass.WriteLine('Ca: {0} ', heartData.Ca);
+  TConsole.NClass.WriteLine('Thal: {0} ', heartData.Thal);
+  TConsole.NClass.WriteLine('Prediction Value: {0} ', prediction.Prediction);
+  var predictionText := 'Not present disease';
+  if prediction.Prediction then
+    predictionText := 'A disease could be present';
+
+  TConsole.NClass.WriteLine('Prediction: {0} ', predictionText);
+  TConsole.NClass.WriteLine('Probability: {0} ', prediction.Probability);
+  TConsole.NClass.WriteLine('==================================================');
+  TConsole.NClass.WriteLine('');
+  TConsole.NClass.WriteLine('');
+end;
 
 ```
 
