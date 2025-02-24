@@ -41,7 +41,7 @@ Database Loader provides a simple API to read data from relational databases dir
 
 To load data, you need to provide a connection string and a SQL command to get data from the database.
 
-```csharp
+```Delphi
 const
   DataRelativePath = '..\..\Data';
   DbFileRelativePath = DataRelativePath + '\DailyDemand.mdf';
@@ -76,7 +76,7 @@ To solve this problem, you build and train an ML model on existing training data
 
 A time series training pipeline can be defined by using `ForecastBySsa` transform.
 
-```csharp
+```Delphi
 var forecastingPipeline := mlContext.Forecasting.ForecastBySsa('ForecastedRentals', 'TotalRentals', 7, 30, 365, 7,
                                                                 False, 1, TMLRankSelectionMethod.rsmExact, True, False,
                                                                 nil, 'LowerBoundRentals', 'UpperBoundRentals');
@@ -86,7 +86,7 @@ The `forecastingPipeline` takes 365 data points for the first year and samples o
 
 Then, to train the model, use the `Fit` method.
 
-```csharp
+```Delphi
 var forecaster: IMLSsaForecastingTransformer := forecastingPipeline.Fit(firstYearData);
 ```
 
@@ -94,7 +94,7 @@ var forecaster: IMLSsaForecastingTransformer := forecastingPipeline.Fit(firstYea
 
 To evaluate the model, compare use the `Transform` method to forecast future values. Then, compare them against the actual values and calculate metrics like *Mean Absolute Error* and *Root Mean Squared Error*.
 
-```csharp
+```Delphi
 class procedure TBikeDemandForecastingConsoleApp.Evaluate(testData: IMLDataView;
   model: IMLTransformer; mlContext: IMLContextManager);
 begin
@@ -149,13 +149,13 @@ end;
 
 To forecast values, create a `TimeSeriesPredictionEngine`, a convenience API to make single predictions.
 
-```csharp
+```Delphi
 var forecastEngine := forecaster.CreateTimeSeriesEngine(TypeInfo(TModelInput), TypeInfo(TModelOutput), mlContext);
 ```
 
 Then, use the `Predict` method to generate a single forecast for the number of periods specified by the `horizon`.
 
-```csharp
+```Delphi
 class procedure TBikeDemandForecastingConsoleApp.Forecast(testData: IMLDataView; horizon: Integer; forecaster: MLTimeSeriesPredictionEngine<TMLEntity, TMLEntity>; mlContext: IMLContextManager);
 begin
   var forecast: TModelOutput := forecaster.Predict() as TModelOutput;
