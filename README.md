@@ -110,4 +110,4 @@ See [ML.Net for Delphi](https://crystalnet-tech.com/Products/dotNetCore4Delphi/D
 
 Check out the [ML.NET API Reference](https://docs.microsoft.com/dotnet/api/?view=ml-dotnet) to see the breadth of APIs available.
 
-[ML.Net for Delphi Samples](https://github.com/CrystalNet-Tech/machinelearning-for-delphi-samples) are licensed under the [MIT license](LICENSE).
+[ML.Net for Delphi Samples](https://github.com/CrystalNet-Tech/machinelearning-for-delphi-samples) are licensed under the [Apache License](https://www.crystalnet-tech.com/DevCodeSamples/ApacheLicenseEula).
