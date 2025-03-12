@@ -1,6 +1,6 @@
-# ML.Net Core for Delphi Samples
+# ML.Net for Delphi Samples
 
-[ML.Net Core for Delphi](https://crystalnet-tech.com/Products/mldotNetCore4Delphi/Default) are sets of APIs that can help you train, build, and ship custom machine-learning models. It gives you ability to add machine learning to Delphi applications.
+[ML.Net for Delphi](https://crystalnet-tech.com/Products/mldotNet4Delphi/Default) are sets of APIs that can help you train, build, and ship custom machine-learning models. It gives you ability to add machine learning to Delphi applications.
 
 In this GitHub repo, we provide samples which will help Delphi developers get started with ML.Net Core for Delphi and how to add Machine Learning into existing and new Delphi applications.
 
