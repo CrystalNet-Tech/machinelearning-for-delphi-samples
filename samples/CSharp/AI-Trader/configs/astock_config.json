@@ -1,0 +1,20 @@
+{
+  "agent_name": "AShareTradingAgent",
+  "agent_type": "BaseAgent_AStock",
+  "model_name": "gpt-4",
+  "start_date": "2024-01-01",
+  "end_date": "2024-01-31",
+  "initial_capital": 100000.0,
+  "stock_symbols": [
+    "600519",
+    "600036",
+    "601318",
+    "600276",
+    "600887"
+  ],
+  "trading_frequency": "daily",
+  "temperature": 0.7,
+  "max_tokens": 4096,
+  "enable_logging": true,
+  "log_directory": "logs"
+}

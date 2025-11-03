@@ -1,0 +1,20 @@
+{
+  "agent_name": "HourlyTradingAgent",
+  "agent_type": "BaseAgent_Hour",
+  "model_name": "gpt-4",
+  "start_date": "2024-01-01",
+  "end_date": "2024-01-15",
+  "initial_capital": 10000.0,
+  "stock_symbols": [
+    "AAPL",
+    "MSFT",
+    "GOOGL",
+    "NVDA",
+    "TSLA"
+  ],
+  "trading_frequency": "hourly",
+  "temperature": 0.7,
+  "max_tokens": 4096,
+  "enable_logging": true,
+  "log_directory": "logs"
+}
